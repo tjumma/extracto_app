@@ -1,24 +1,46 @@
 'use client'
 
-import { Container, Flex, Text, Box } from "@chakra-ui/react"
-import { Fragment } from "react";
+import { Flex, Text, Box, Progress } from "@chakra-ui/react"
+import { useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
+
+const isBrowser = () => typeof window !== 'undefined';
+
+function getWindowPixelRatio() {
+    if (isBrowser()) {
+        return window.devicePixelRatio;
+    }
+    else
+        return 1;
+}
 
 export const GameView: React.FC = () => {
 
-    const { unityProvider } = useUnityContext({
+    const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
+
+    const { unityProvider, requestFullscreen, isLoaded, loadingProgression } = useUnityContext({
         loaderUrl: "build/extracto.loader.js",
         dataUrl: "build/extracto.data",
         frameworkUrl: "build/extracto.framework.js",
         codeUrl: "build/extracto.wasm",
     });
 
+    function handleClickFullscreen(isFullScreen: boolean) {
+        console.log("Go fullscreen");
+        requestFullscreen(isFullScreen);
+    }
+
     return (
-        <Flex backgroundColor={"green"} direction="column" flex={"1 0 0px"} px={0} py={0} alignItems={"center"}>
+        <Flex direction="column" flex={"1 0 0px"} px={0} py={0} alignItems={"center"}>
             <Text>GameView</Text>
-            <Text>GameView</Text>
-            <Box backgroundColor={"red"} flex={"1 0 0px"} width={"100%"} position={"relative"}>
-                <Unity unityProvider={unityProvider} style={{ width: "100%", height: "100%", position: "absolute"}} />
+            <Box flex={"1 0 0px"} width={"100%"} position={"relative"}>
+                <Unity
+                    unityProvider={unityProvider}
+                    style={{ width: "100%", height: "100%", position: "absolute" }}
+                    devicePixelRatio={pixelRatio}
+                />
+                {isLoaded && <button style={{ right: "20px", top: "20px", position: "absolute" }} className="fullscreen-button" onClick={() => handleClickFullscreen(true)}>Go fullscreen</button>}
+                {!isLoaded && <Progress style={{ left: "0px", bottom: "0px", position: "absolute", width:"100%" }} hasStripe value={loadingProgression * 100} size={'sm'}/>}
             </Box>
         </Flex>
     )
