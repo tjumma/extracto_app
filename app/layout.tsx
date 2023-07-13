@@ -1,7 +1,8 @@
 'use client'
 
 import { CacheProvider } from '@chakra-ui/next-js'
-import { ChakraProvider, ColorModeScript, extendTheme } from '@chakra-ui/react'
+import { ChakraProvider, ColorModeScript, Flex, extendTheme } from '@chakra-ui/react'
+import { NavBar } from './components/NavBar'
 
 const config = {
   initialColorMode: 'dark',
@@ -18,10 +19,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-      <ColorModeScript/>
+        <ColorModeScript />
         <CacheProvider>
           <ChakraProvider theme={theme}>
-            {children}
+            <Flex direction={"column"} height="100vh">
+              <NavBar />
+              {children}
+            </Flex>
           </ChakraProvider>
         </CacheProvider>
       </body>

@@ -14,7 +14,8 @@
     "framer-motion": "^10.12.20",
     "next": "^13.4.9",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-unity-webgl": "^9.4.2"
   },
   "devDependencies": {
     "@types/node": "20.4.2",
