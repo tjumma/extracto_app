@@ -1,4 +1,14 @@
-import { Providers } from "./providers";
+'use client'
+
+import { CacheProvider } from '@chakra-ui/next-js'
+import { ChakraProvider, ColorModeScript, extendTheme } from '@chakra-ui/react'
+
+const config = {
+  initialColorMode: 'dark',
+  useSystemColorMode: false,
+}
+
+export const theme = extendTheme({ config })
 
 export default function RootLayout({
   children,
@@ -8,9 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>
-          {children}
-        </Providers>
+      <ColorModeScript/>
+        <CacheProvider>
+          <ChakraProvider theme={theme}>
+            {children}
+          </ChakraProvider>
+        </CacheProvider>
       </body>
     </html>
   )

@@ -9,7 +9,7 @@ export const HomeView: React.FC = () => {
     return (
         <Flex direction = "column" ml ={10}>
             <Text mt = {6} mb ={6}>HomeView</Text>
-            <Button mb = {6} colorScheme = "orange" width = "400px">Button</Button>
+            <Button mb = {6} width = "400px">Button</Button>
             <Button onClick = {toggleColorMode} width = "400px">Toggle Color Mode</Button>
         </Flex>
     )
