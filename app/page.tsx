@@ -1,3 +1,5 @@
-export default function Page() {
-    return <h1>Hello, Next.js!</h1>
+import { HomeView } from "./views/HomeView";
+
+export default function HomePage() {
+    return <HomeView/>
   }
