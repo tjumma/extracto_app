@@ -3,6 +3,7 @@
 import { Flex, Text, Box, Progress } from "@chakra-ui/react"
 import { Unity, useUnityContext } from "react-unity-webgl";
 import { useGameContext } from "../contexts/GameContext";
+import { useEffect, useState } from "react";
 
 const isBrowser = () => typeof window !== 'undefined';
 
@@ -16,9 +17,20 @@ function getWindowPixelRatio() {
 
 export const UnityFrame: React.FC = () => {
 
+    console.log("hello")
+
     const { showGame } = useGameContext()
 
     const pixelRatio = getWindowPixelRatio()
+    console.log(`devicePixelRatio: ${pixelRatio}`)
+
+    // const [pixelRatio, setPixelRatio] = useState(1);
+
+    // useEffect(() => {
+    //     const currentPixelRatio = getWindowPixelRatio()
+    //     setPixelRatio(currentPixelRatio)
+    //     console.log(`devicePixelRatio: ${pixelRatio}`)
+    // }, [])
 
     const { unityProvider, requestFullscreen, isLoaded, loadingProgression } = useUnityContext({
         loaderUrl: "build/extracto.loader.js",
