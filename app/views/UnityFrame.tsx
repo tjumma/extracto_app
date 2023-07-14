@@ -1,6 +1,6 @@
 'use client'
 
-import { Flex, Text, Box, Progress } from "@chakra-ui/react"
+import { Flex, Text, Box, Progress, Spacer, Center, AbsoluteCenter } from "@chakra-ui/react"
 import { Unity, useUnityContext } from "react-unity-webgl";
 import { useGameContext } from "../contexts/GameContext";
 import { useEffect, useState } from "react";
@@ -12,8 +12,7 @@ function getWindowPixelRatio() {
         console.log(`updateDevicePixelRatio: ${window.devicePixelRatio}`);
         return window.devicePixelRatio;
     }
-    else
-    {
+    else {
         console.log(`updateDevicePixelRatio: 1`);
         return 1;
     }
@@ -33,7 +32,7 @@ export const UnityFrame: React.FC = () => {
                 console.log(`updateDevicePixelRatio: ${current}`);
                 setPixelRatio(current);
             };
-            
+
             const mediaMatcher = window.matchMedia(
                 `screen and (resolution: ${pixelRatio}dppx)`
             );
@@ -64,19 +63,22 @@ export const UnityFrame: React.FC = () => {
 
     return (
         <>
-        <Flex display={showGame? "flex" : "none"} direction="column" flex={"1 0 0px"} px={0} py={0} alignItems={"center"}>
-            <Text mb = {5}>UnityFrame</Text>
-            <Box flex={"1 0 0px"} width={"100%"} position={"relative"}>
-                <Unity
-                    unityProvider={unityProvider}
-                    tabIndex={1}
-                    style={{ width: "100%", height: "100%", position: "absolute" }}
-                    devicePixelRatio={pixelRatio}
-                />
-                {isLoaded && <button style={{ right: "20px", top: "20px", position: "absolute" }} className="fullscreen-button" onClick={() => handleClickFullscreen(true)}>Go fullscreen</button>}
-                {!isLoaded && <Progress style={{ left: "0px", bottom: "0px", position: "absolute", width:"100%" }} hasStripe value={loadingProgression * 100} size={'sm'}/>}
-            </Box>
-        </Flex>
+            <Flex display={showGame ? "flex" : "none"} direction="column" flex={"1 0 0px"} px={0} py={0} alignItems={"center"}>
+                {/* <Text mb={5}>UnityFrame</Text> */}
+                <Box flex={"1 0 0px"} width={"100%"} position={"relative"}>
+                    {!isLoaded && <AbsoluteCenter>
+                    <Text>Loading...</Text>
+                    </AbsoluteCenter>}
+                    <Unity
+                        unityProvider={unityProvider}
+                        tabIndex={1}
+                        style={{ width: "100%", height: "100%", position: "absolute" }}
+                        devicePixelRatio={pixelRatio}
+                    />
+                    {isLoaded && <button style={{ right: "20px", top: "20px", position: "absolute" }} className="fullscreen-button" onClick={() => handleClickFullscreen(true)}>Go fullscreen</button>}
+                    {!isLoaded && <Progress style={{ left: "0px", bottom: "0px", position: "absolute", width: "100%" }} hasStripe value={loadingProgression * 100} size={'sm'} />}
+                </Box>
+            </Flex>
         </>
     )
 }
