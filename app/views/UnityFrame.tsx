@@ -69,6 +69,7 @@ export const UnityFrame: React.FC = () => {
             <Box flex={"1 0 0px"} width={"100%"} position={"relative"}>
                 <Unity
                     unityProvider={unityProvider}
+                    tabIndex={1}
                     style={{ width: "100%", height: "100%", position: "absolute" }}
                     devicePixelRatio={pixelRatio}
                 />
