@@ -9,34 +9,52 @@ const isBrowser = () => typeof window !== 'undefined';
 
 function getWindowPixelRatio() {
     if (isBrowser()) {
+        console.log(`updateDevicePixelRatio: ${window.devicePixelRatio}`);
         return window.devicePixelRatio;
     }
     else
+    {
+        console.log(`updateDevicePixelRatio: 1`);
         return 1;
+    }
 }
 
 export const UnityFrame: React.FC = () => {
 
-    console.log("hello")
-
     const { showGame } = useGameContext()
 
-    const pixelRatio = getWindowPixelRatio()
-    console.log(`devicePixelRatio: ${pixelRatio}`)
+    const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
 
-    // const [pixelRatio, setPixelRatio] = useState(1);
+    useEffect(
+        function () {
 
-    // useEffect(() => {
-    //     const currentPixelRatio = getWindowPixelRatio()
-    //     setPixelRatio(currentPixelRatio)
-    //     console.log(`devicePixelRatio: ${pixelRatio}`)
-    // }, [])
+            const updateDevicePixelRatio = function () {
+                var current = getWindowPixelRatio();
+                console.log(`updateDevicePixelRatio: ${current}`);
+                setPixelRatio(current);
+            };
+            
+            const mediaMatcher = window.matchMedia(
+                `screen and (resolution: ${pixelRatio}dppx)`
+            );
+
+            mediaMatcher.addEventListener("change", updateDevicePixelRatio);
+
+            return function () {
+                mediaMatcher.removeEventListener("change", updateDevicePixelRatio);
+            };
+        },
+        [pixelRatio]
+    );
 
     const { unityProvider, requestFullscreen, isLoaded, loadingProgression } = useUnityContext({
         loaderUrl: "build/extracto.loader.js",
         dataUrl: "build/extracto.data",
         frameworkUrl: "build/extracto.framework.js",
         codeUrl: "build/extracto.wasm",
+        productName: "Extracto",
+        productVersion: "0.1.0",
+        companyName: "tjumma",
     });
 
     function handleClickFullscreen(isFullScreen: boolean) {

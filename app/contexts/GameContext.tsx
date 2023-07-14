@@ -4,7 +4,7 @@ import { Dispatch, FC, ReactNode, SetStateAction, createContext, useContext, use
 
 export interface GameContextState {
     showGame: boolean;
-    setShowGame: Dispatch<SetStateAction<boolean>>
+    setShowGame: (show: boolean) => void
 }
 
 export const GameContext = createContext<GameContextState>({} as GameContextState);
