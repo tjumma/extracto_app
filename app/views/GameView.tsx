@@ -17,8 +17,10 @@ export const GameView: React.FC = () => {
     }, []);
 
     return (
-        <Flex direction = "column" px={0} py={0} alignItems={"center"}>
-            <Text>GameView</Text>
-        </Flex>
+        // <Flex direction = "column" px={0} py={0} alignItems={"center"}>
+        //     <Text>GameView</Text>
+        // </Flex>
+        <>
+        </>
     )
 }

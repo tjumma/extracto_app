@@ -3,6 +3,12 @@
 import { Link } from '@chakra-ui/next-js'
 import { Flex, IconButton, Spacer, useColorMode } from '@chakra-ui/react'
 import { SunIcon, MoonIcon } from '@chakra-ui/icons'
+import dynamic from "next/dynamic";
+
+const WalletMultiButtonDynamic = dynamic(
+    async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+    { ssr: false }
+  );
 
 export const NavBar: React.FC = () => {
 
@@ -27,9 +33,7 @@ export const NavBar: React.FC = () => {
                 icon={colorMode === 'light'? <SunIcon /> : <MoonIcon />}
                 onClick = {toggleColorMode}
             />
-            <Link href='/clockwork' color='blue.400' _hover={{ color: 'blue.500' }}>
-                WALLET
-            </Link>
+            <WalletMultiButtonDynamic/>
         </Flex>
     )
 }

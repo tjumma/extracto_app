@@ -1,0 +1,8 @@
+.wallet-adapter-button-trigger {
+  background-color: transparent;
+  color: var(--chakra-colors-font);
+}
+
+.wallet-adapter-button-trigger:not([disabled]):hover {
+  background-color: transparent;
+}
