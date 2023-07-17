@@ -24,6 +24,92 @@
       "args": []
     },
     {
+      "name": "startThread",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "clockworkProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The Clockwork thread program."
+          ]
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "The signer who will pay to initialize the program.",
+            "(not to be confused with the thread executions)."
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The Solana system program."
+          ]
+        },
+        {
+          "name": "thread",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "Address to assign to the newly created thread."
+          ]
+        },
+        {
+          "name": "threadAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The pda that will own and manage the thread."
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "threadId",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "incrementViaThread",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "thread",
+          "isMut": false,
+          "isSigner": true,
+          "docs": [
+            "Verify that only this thread can execute the Increment Instruction"
+          ]
+        },
+        {
+          "name": "threadAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The Thread Admin",
+            "The authority that was used as a seed to derive the thread address",
+            "`thread_authority` should equal `thread.thread_authority`"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "increment",
       "accounts": [
         {

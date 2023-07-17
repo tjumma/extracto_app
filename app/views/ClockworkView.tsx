@@ -8,6 +8,8 @@ import { useWallet, useConnection } from "@solana/wallet-adapter-react"
 import { useAnchorContext } from "../contexts/AnchorContext"
 import { useNotificationContext } from "../contexts/NotificationContext"
 
+import { PublicKey, SystemProgram, } from "@solana/web3.js";
+
 type CounterDataAccount = {
     count: number
 }
@@ -16,7 +18,7 @@ export const ClockworkView: React.FC = () => {
 
     const { showNotification } = useNotificationContext()
 
-    const { program, counterAddress } = useAnchorContext()
+    const { program, counterAddress, clockworkProvider } = useAnchorContext()
     const { connection } = useConnection();
     const { publicKey, sendTransaction, signTransaction } = useWallet()
 
@@ -25,6 +27,44 @@ export const ClockworkView: React.FC = () => {
     const [isResetLoading, setIsResetLoading] = useState(false)
 
     const [counterDataAccount, setCounterDataAccount] = useState<CounterDataAccount | null>(null)
+
+    const startThread = async () => {
+        // 1️⃣ Prepare thread address
+        const threadId = "counter-" + new Date().getTime() / 1000;
+        const [threadAuthority] = PublicKey.findProgramAddressSync(
+            [anchor.utils.bytes.utf8.encode("thread_authority")], // 👈 make sure it matches on the prog side
+            program.programId
+        );
+        const [threadAddress, threadBump] = clockworkProvider.getThreadPDA(threadAuthority, threadId)
+
+        try {
+            // 2️⃣ Ask our program to create a thread via CPI
+            // and thus become the admin of that thread
+            await program.methods
+                .startThread(Buffer.from(threadId))
+                .accounts({
+                    payer: publicKey,
+                    systemProgram: SystemProgram.programId,
+                    clockworkProgram: clockworkProvider.threadProgram.programId,
+                    thread: threadAddress,
+                    threadAuthority: threadAuthority,
+                    counter: counterAddress,
+                })
+                .rpc();
+            // await print_thread(clockworkProvider, threadAddress);
+
+            // console.log("Verifying that Thread increments the counter every 10s")
+            // for (let i = 1; i < 4; i++) {
+            //     await waitForThreadExec(clockworkProvider, threadAddress);
+            //     const counterAcc = await fetchCounter(counter);
+            //     expect(counterAcc.currentValue.toString()).to.eq(i.toString());
+            // }
+        }
+        catch(e)
+        {
+            console.log(e)
+        }
+    }
 
     useEffect(() => {
         console.log("FETCHING DATA ON MOUNT!")
@@ -230,6 +270,7 @@ export const ClockworkView: React.FC = () => {
             <Button isLoading={isIncrementLoading} onClick={increment} isDisabled={!publicKey} mb={5}>Increment manually</Button>
             <Button isLoading={isResetLoading} onClick={reset} isDisabled={!publicKey} mb={5}>Reset counter</Button>
             <Button onClick={fetchData} mb={5}>Fetch counter account manually</Button>
+            <Button onClick={startThread} mb={5}>Start thread</Button>
             <Text>{`Counter: ${counterDataAccount ? counterDataAccount.count : "null"}`}</Text>
         </Flex>
     )
