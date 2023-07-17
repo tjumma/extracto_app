@@ -3,15 +3,10 @@
 import React, { FC, ReactNode, useMemo } from 'react';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { BackpackWalletAdapter, PhantomWalletAdapter, SolflareWalletAdapter, UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
+import { BackpackWalletAdapter, PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
 import {
-    WalletModalProvider,
-    WalletDisconnectButton,
-    WalletMultiButton
-} from '@solana/wallet-adapter-react-ui';
-import { clusterApiUrl } from '@solana/web3.js';
+    WalletModalProvider} from '@solana/wallet-adapter-react-ui';
 
-// Default styles that can be overridden by your app
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 export const Wallet: FC<{ children: ReactNode }> = ({ children }) => {
@@ -36,9 +31,6 @@ export const Wallet: FC<{ children: ReactNode }> = ({ children }) => {
         <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets} autoConnect>
                 <WalletModalProvider>
-                    {/* <WalletMultiButton />
-                    <WalletDisconnectButton /> */}
-                    { /* Your app's components go here, nested within the context providers. */ }
                     {children}
                 </WalletModalProvider>
             </WalletProvider>

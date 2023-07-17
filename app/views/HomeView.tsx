@@ -1,10 +1,8 @@
 'use client'
 
-import { Flex, Button, Text, useColorMode } from "@chakra-ui/react"
+import { Flex, Button, Text } from "@chakra-ui/react"
 
 export const HomeView: React.FC = () => {
-
-    const { colorMode, toggleColorMode } = useColorMode()
 
     return (
         <Flex direction = "column" px ={0} py={0} alignItems={"center"}>

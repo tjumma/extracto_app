@@ -64,7 +64,6 @@ export const UnityFrame: React.FC = () => {
     return (
         <>
             <Flex display={showGame ? "flex" : "none"} direction="column" flex={"1 0 0px"} px={0} py={0} alignItems={"center"}>
-                {/* <Text mb={5}>UnityFrame</Text> */}
                 <Box flex={"1 0 0px"} width={"100%"} position={"relative"}>
                     {!isLoaded && <AbsoluteCenter>
                     <Text>Loading...</Text>

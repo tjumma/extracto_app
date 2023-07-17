@@ -6,12 +6,15 @@ import { useCallback, useEffect, useState } from "react"
 import { useWallet, useConnection } from "@solana/wallet-adapter-react"
 
 import { useAnchorContext } from "../contexts/AnchorContext"
+import { useNotificationContext } from "../contexts/NotificationContext"
 
 type CounterDataAccount = {
     count: number
 }
 
 export const ClockworkView: React.FC = () => {
+
+    const { showNotification } = useNotificationContext()
 
     const { program, counterAddress } = useAnchorContext()
     const { connection } = useConnection();
@@ -41,6 +44,14 @@ export const ClockworkView: React.FC = () => {
 
         if (counterDataAccount) {
             console.log("Counter account is already initialized");
+
+            showNotification({
+                status: "info",
+                title: "Already initialized!",
+                description: `Counter account is already initialized`,
+                link: `https://solana.fm/address/${counterAddress}?cluster=http://localhost:8899`,
+                linkText: "Counter account"
+            })
         }
         else {
             try {
@@ -52,11 +63,22 @@ export const ClockworkView: React.FC = () => {
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
                     .rpc()
-    
-                console.log(txHash)
+
+                showNotification({
+                    status: "success",
+                    title: "Counter initialized!",
+                    description: `Counter account initialized`,
+                    link: `https://solana.fm/tx/${txHash}?cluster=http://localhost:8899`,
+                    linkText: "Transaction"
+                })
             }
             catch (e) {
                 console.log(e)
+                showNotification({
+                    status: "error",
+                    title: "Initialize error!",
+                    description: `${e}`,
+                })
             }
         }
     }, [counterAddress, publicKey])
@@ -73,10 +95,20 @@ export const ClockworkView: React.FC = () => {
                 })
                 .rpc()
 
-            console.log(txHash)
+            showNotification({
+                status: "success",
+                title: "Counter incremented!",
+                description: `Counter account incremented`,
+                link: `https://solana.fm/tx/${txHash}?cluster=http://localhost:8899`,
+                linkText: "Transaction"
+            })
         }
         catch (e) {
-            console.log(e)
+            showNotification({
+                status: "error",
+                title: "Increment error!",
+                description: `${e}`,
+            })
         }
     }, [counterAddress, publicKey])
 
@@ -92,10 +124,20 @@ export const ClockworkView: React.FC = () => {
                 })
                 .rpc()
 
-            console.log(txHash)
+            showNotification({
+                status: "success",
+                title: "Counter reset!",
+                description: `Counter has been reset`,
+                link: `https://solana.fm/tx/${txHash}?cluster=http://localhost:8899`,
+                linkText: "Transaction"
+            })
         }
         catch (e) {
-            console.log(e)
+            showNotification({
+                status: "error",
+                title: "Reset error!",
+                description: `${e}`,
+            })
         }
     }, [counterAddress, publicKey])
 
