@@ -18,11 +18,20 @@ export const ClockworkView: React.FC = () => {
 
     const { program, counterAddress } = useAnchorContext()
     const { connection } = useConnection();
-    const { publicKey } = useWallet()
+    const { publicKey, sendTransaction, signTransaction } = useWallet()
+
+    const [isInitializeLoading, setIsInitializeLoading] = useState(false)
+    const [isIncrementLoading, setIsIncrementLoading] = useState(false)
+    const [isResetLoading, setIsResetLoading] = useState(false)
 
     const [counterDataAccount, setCounterDataAccount] = useState<CounterDataAccount | null>(null)
 
-    const fetchData = useCallback(async () => {
+    useEffect(() => {
+        console.log("FETCHING DATA ON MOUNT!")
+        fetchData()
+    }, [publicKey])
+
+    const fetchData = async () => {
         console.log("Fetching counter account...")
         if (counterAddress) {
             try {
@@ -37,7 +46,7 @@ export const ClockworkView: React.FC = () => {
         else {
             setCounterDataAccount(null)
         }
-    }, [])
+    }
 
     const initialize = useCallback(async () => {
         console.log("Initialize");
@@ -55,25 +64,42 @@ export const ClockworkView: React.FC = () => {
         }
         else {
             try {
-                const txHash = await program.methods
+                setIsInitializeLoading(true)
+
+                const tx = await program.methods
                     .initialize()
                     .accounts({
                         counter: counterAddress,
                         user: publicKey,
                         systemProgram: anchor.web3.SystemProgram.programId,
                     })
-                    .rpc()
+                    .transaction()
+
+                const txSig = await sendTransaction(tx, connection, {
+                    skipPreflight: true,
+                })
+
+                const latestBlockHash = await connection.getLatestBlockhash();
+
+                await connection.confirmTransaction({
+                    blockhash: latestBlockHash.blockhash,
+                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                    signature: txSig,
+                })
+
+                setIsInitializeLoading(false)
 
                 showNotification({
                     status: "success",
                     title: "Counter initialized!",
                     description: `Counter account initialized`,
-                    link: `https://solana.fm/tx/${txHash}?cluster=http://localhost:8899`,
+                    link: `https://solana.fm/tx/${txSig}?cluster=http://localhost:8899`,
                     linkText: "Transaction"
                 })
             }
             catch (e) {
-                console.log(e)
+                setIsInitializeLoading(false)
+
                 showNotification({
                     status: "error",
                     title: "Initialize error!",
@@ -81,29 +107,47 @@ export const ClockworkView: React.FC = () => {
                 })
             }
         }
-    }, [counterAddress, publicKey])
+    }, [counterAddress, publicKey, counterDataAccount])
 
     const increment = useCallback(async () => {
         console.log("Increment");
 
         try {
-            const txHash = await program.methods
+            setIsIncrementLoading(true)
+
+            const tx = await program.methods
                 .increment()
                 .accounts({
                     counter: counterAddress,
                     user: publicKey,
                 })
-                .rpc()
+                .transaction()
+
+            const txSig = await sendTransaction(tx, connection, {
+                skipPreflight: true,
+            })
+
+            const latestBlockHash = await connection.getLatestBlockhash();
+
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: txSig,
+            })
+
+            setIsIncrementLoading(false)
 
             showNotification({
                 status: "success",
                 title: "Counter incremented!",
                 description: `Counter account incremented`,
-                link: `https://solana.fm/tx/${txHash}?cluster=http://localhost:8899`,
+                link: `https://solana.fm/tx/${txSig}?cluster=http://localhost:8899`,
                 linkText: "Transaction"
             })
         }
         catch (e) {
+            setIsIncrementLoading(false)
+
             showNotification({
                 status: "error",
                 title: "Increment error!",
@@ -116,23 +160,41 @@ export const ClockworkView: React.FC = () => {
         console.log("Reset");
 
         try {
-            const txHash = await program.methods
+            setIsResetLoading(true)
+
+            const tx = await program.methods
                 .reset()
                 .accounts({
                     counter: counterAddress,
                     user: publicKey,
                 })
-                .rpc()
+                .transaction()
+
+            const txSig = await sendTransaction(tx, connection, {
+                skipPreflight: true,
+            })
+
+            const latestBlockHash = await connection.getLatestBlockhash();
+
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: txSig,
+            })
+
+            setIsResetLoading(false)
 
             showNotification({
                 status: "success",
                 title: "Counter reset!",
                 description: `Counter has been reset`,
-                link: `https://solana.fm/tx/${txHash}?cluster=http://localhost:8899`,
+                link: `https://solana.fm/tx/${txSig}?cluster=http://localhost:8899`,
                 linkText: "Transaction"
             })
         }
         catch (e) {
+            setIsResetLoading(false)
+
             showNotification({
                 status: "error",
                 title: "Reset error!",
@@ -140,10 +202,6 @@ export const ClockworkView: React.FC = () => {
             })
         }
     }, [counterAddress, publicKey])
-
-    useEffect(() => {
-        fetchData()
-    }, [publicKey])
 
     useEffect(() => {
         if (!counterAddress) return
@@ -168,9 +226,9 @@ export const ClockworkView: React.FC = () => {
     return (
         <Flex direction="column" px={0} py={0} alignItems={"center"}>
             <Text mt={10} mb={10}>ClockworkView</Text>
-            <Button onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
-            <Button onClick={increment} isDisabled={!publicKey} mb={5}>Increment manually</Button>
-            <Button onClick={reset} isDisabled={!publicKey} mb={5}>Reset counter</Button>
+            <Button isLoading={isInitializeLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
+            <Button isLoading={isIncrementLoading} onClick={increment} isDisabled={!publicKey} mb={5}>Increment manually</Button>
+            <Button isLoading={isResetLoading} onClick={reset} isDisabled={!publicKey} mb={5}>Reset counter</Button>
             <Button onClick={fetchData} mb={5}>Fetch counter account manually</Button>
             <Text>{`Counter: ${counterDataAccount ? counterDataAccount.count : "null"}`}</Text>
         </Flex>

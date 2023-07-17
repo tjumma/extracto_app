@@ -29,7 +29,7 @@ export const NotificationContextProvider: FC<{ children: ReactNode }> = ({ child
     const addToast = useCallback((notificationOptions: NotificationOptions) => {
         toast({
             position: 'bottom-left',
-            duration: 3000000,
+            duration: 3000,
             isClosable: true,
             render: () => (
                 <Alert status={notificationOptions.status} rounded={"lg"} py={"20px"} px={"30px"}>
