@@ -38,6 +38,22 @@ export type ExtractoProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "reset",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -83,6 +99,22 @@ export const IDL: ExtractoProgram = {
     },
     {
       "name": "increment",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "reset",
       "accounts": [
         {
           "name": "counter",

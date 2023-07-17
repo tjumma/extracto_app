@@ -2,14 +2,10 @@
 
 import * as anchor from "@coral-xyz/anchor"
 import { Button, Flex, Text } from "@chakra-ui/react"
-import { FC, ReactNode, useCallback, createContext, useContext, useMemo, useEffect, useState } from "react"
-import { useWallet, useConnection, useAnchorWallet, AnchorWallet } from "@solana/wallet-adapter-react"
-import { PublicKey, SystemProgram, } from "@solana/web3.js";
+import { useCallback, useEffect, useState } from "react"
+import { useWallet, useConnection } from "@solana/wallet-adapter-react"
 
-import idl from "../../extracto_program.json"
-import { ExtractoProgram, IDL } from "../../extracto_program"
-
-const COUNTER_SEED = "counter_1";
+import { useAnchorContext } from "../contexts/AnchorContext"
 
 type CounterDataAccount = {
     count: number
@@ -17,28 +13,11 @@ type CounterDataAccount = {
 
 export const ClockworkView: React.FC = () => {
 
-    const { connection } = useConnection()
-    const anchorWallet = useAnchorWallet()
+    const { program, counterAddress } = useAnchorContext()
+    const { connection } = useConnection();
     const { publicKey } = useWallet()
 
     const [counterDataAccount, setCounterDataAccount] = useState<CounterDataAccount | null>(null)
-
-    const provider = useMemo(() => new anchor.AnchorProvider(connection, anchorWallet as AnchorWallet, {})
-        , [connection, anchorWallet])
-
-    useEffect(() => {
-        anchor.setProvider(provider)
-    }, [provider])
-
-    const programId = new anchor.web3.PublicKey(idl.metadata.address)
-    const program = new anchor.Program<ExtractoProgram>(IDL, programId, provider);
-
-    const [counterAddress] = PublicKey.findProgramAddressSync(
-        [anchor.utils.bytes.utf8.encode(COUNTER_SEED)],
-        program.programId
-    );
-
-    console.log(`Counter address: ${counterAddress}`)
 
     const fetchData = useCallback(async () => {
         console.log("Fetching counter account...")
@@ -60,20 +39,25 @@ export const ClockworkView: React.FC = () => {
     const initialize = useCallback(async () => {
         console.log("Initialize");
 
-        try {
-            const txHash = await program.methods
-                .initialize()
-                .accounts({
-                    counter: counterAddress,
-                    user: publicKey,
-                    systemProgram: anchor.web3.SystemProgram.programId,
-                })
-                .rpc()
-
-            console.log(txHash)
+        if (counterDataAccount) {
+            console.log("Counter account is already initialized");
         }
-        catch (e) {
-            console.log(e)
+        else {
+            try {
+                const txHash = await program.methods
+                    .initialize()
+                    .accounts({
+                        counter: counterAddress,
+                        user: publicKey,
+                        systemProgram: anchor.web3.SystemProgram.programId,
+                    })
+                    .rpc()
+    
+                console.log(txHash)
+            }
+            catch (e) {
+                console.log(e)
+            }
         }
     }, [counterAddress, publicKey])
 
@@ -96,19 +80,38 @@ export const ClockworkView: React.FC = () => {
         }
     }, [counterAddress, publicKey])
 
+    const reset = useCallback(async () => {
+        console.log("Reset");
+
+        try {
+            const txHash = await program.methods
+                .reset()
+                .accounts({
+                    counter: counterAddress,
+                    user: publicKey,
+                })
+                .rpc()
+
+            console.log(txHash)
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }, [counterAddress, publicKey])
+
     useEffect(() => {
         fetchData()
-  }, [publicKey])
+    }, [publicKey])
 
     useEffect(() => {
         if (!counterAddress) return
 
         const subscriptionId = connection.onAccountChange(
             counterAddress,
-            (accountInfo) => {
+            (counterAccountInfo) => {
                 const decodedAccount = program.coder.accounts.decode(
                     "counter",
-                    accountInfo.data
+                    counterAccountInfo.data
                 )
                 console.log("Got new counter via socket:", decodedAccount.count.toString())
                 setCounterDataAccount(decodedAccount)
@@ -123,10 +126,11 @@ export const ClockworkView: React.FC = () => {
     return (
         <Flex direction="column" px={0} py={0} alignItems={"center"}>
             <Text mt={10} mb={10}>ClockworkView</Text>
-            <Button onClick={initialize} mb={5}>Initialize</Button>
-            <Button onClick={increment} mb={5}>Increment</Button>
-            <Button onClick={fetchData} mb={5}>Fetch</Button>
-            <Text>{`Counter: ${counterDataAccount? counterDataAccount.count : "null"}`}</Text>
+            <Button onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
+            <Button onClick={increment} isDisabled={!publicKey} mb={5}>Increment manually</Button>
+            <Button onClick={reset} isDisabled={!publicKey} mb={5}>Reset counter</Button>
+            <Button onClick={fetchData} mb={5}>Fetch counter account manually</Button>
+            <Text>{`Counter: ${counterDataAccount ? counterDataAccount.count : "null"}`}</Text>
         </Flex>
     )
 }

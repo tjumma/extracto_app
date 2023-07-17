@@ -8,6 +8,7 @@ import { NavBar } from './components/NavBar'
 import { UnityFrame } from './views/UnityFrame'
 import { GameContextProvider } from './contexts/GameContext'
 import { Wallet } from './components/Wallet'
+import { AnchorContext, AnchorContextProvider } from './contexts/AnchorContext'
 
 export default function RootLayout({
   children,
@@ -29,13 +30,15 @@ export default function RootLayout({
         <CacheProvider>
           <ChakraProvider theme={theme}>
             <Wallet>
-              <GameContextProvider>
-                <Flex direction={"column"} height="100vh">
-                  <NavBar />
-                  {children}
-                  <UnityFrame />
-                </Flex>
-              </GameContextProvider>
+              <AnchorContextProvider>
+                <GameContextProvider>
+                  <Flex direction={"column"} height="100vh">
+                    <NavBar />
+                    {children}
+                    <UnityFrame />
+                  </Flex>
+                </GameContextProvider>
+              </AnchorContextProvider>
             </Wallet>
           </ChakraProvider>
         </CacheProvider>
