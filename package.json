@@ -10,6 +10,7 @@
     "@chakra-ui/icons": "^2.0.19",
     "@chakra-ui/next-js": "^2.1.4",
     "@chakra-ui/react": "^2.7.1",
+    "@coral-xyz/anchor": "^0.28.1-beta.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@solana/wallet-adapter-react": "^0.15.32",
