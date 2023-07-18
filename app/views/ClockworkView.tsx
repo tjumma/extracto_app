@@ -52,18 +52,46 @@ export const ClockworkView: React.FC = () => {
                 })
                 .rpc();
             // await print_thread(clockworkProvider, threadAddress);
-
-            // console.log("Verifying that Thread increments the counter every 10s")
-            // for (let i = 1; i < 4; i++) {
-            //     await waitForThreadExec(clockworkProvider, threadAddress);
-            //     const counterAcc = await fetchCounter(counter);
-            //     expect(counterAcc.currentValue.toString()).to.eq(i.toString());
-            // }
         }
         catch(e)
         {
             console.log(e)
         }
+    }
+
+    const pauseThread = async () => {
+        // 1️⃣ Prepare thread address
+        const threadId = "counter-1689632307.698";
+        const [threadAuthority] = PublicKey.findProgramAddressSync(
+            [anchor.utils.bytes.utf8.encode("thread_authority")], // 👈 make sure it matches on the prog side
+            program.programId
+        );
+        const [threadAddress, threadBump] = clockworkProvider.getThreadPDA(threadAuthority, threadId)
+
+        try {
+            // 2️⃣ Ask our program to create a thread via CPI
+            // and thus become the admin of that thread
+            await program.methods
+                .pauseThread(Buffer.from(threadId))
+                .accounts({
+                    clockworkProgram: clockworkProvider.threadProgram.programId,
+                    thread: threadAddress,
+                    threadAuthority: threadAuthority,
+                })
+                .rpc();
+            // await print_thread(clockworkProvider, threadAddress);
+        }
+        catch(e)
+        {
+            console.log(e)
+        }
+    }
+
+    const getThreadAccount = async () => {
+        const address = new PublicKey("BXmN5X2ERLFdBGWMbapFcHtqRw52rUbhdcCcKyMW8qiJ")
+        const threadAccount = await clockworkProvider.getThreadAccount(address);
+        console.log(threadAccount)
+        console.log(threadAccount.id.toString())
     }
 
     useEffect(() => {
@@ -269,8 +297,10 @@ export const ClockworkView: React.FC = () => {
             <Button isLoading={isInitializeLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
             <Button isLoading={isIncrementLoading} onClick={increment} isDisabled={!publicKey} mb={5}>Increment manually</Button>
             <Button isLoading={isResetLoading} onClick={reset} isDisabled={!publicKey} mb={5}>Reset counter</Button>
+            <Button onClick={startThread} isDisabled={!publicKey} mb={5}>Start thread</Button>
+            <Button onClick={pauseThread} isDisabled={!publicKey} mb={5}>Pause thread</Button>
             <Button onClick={fetchData} mb={5}>Fetch counter account manually</Button>
-            <Button onClick={startThread} mb={5}>Start thread</Button>
+            <Button onClick={getThreadAccount} mb={5}>Get thread id</Button>
             <Text>{`Counter: ${counterDataAccount ? counterDataAccount.count : "null"}`}</Text>
         </Flex>
     )

@@ -81,6 +81,41 @@ export type ExtractoProgram = {
       ]
     },
     {
+      "name": "pauseThread",
+      "accounts": [
+        {
+          "name": "clockworkProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The Clockwork thread program."
+          ]
+        },
+        {
+          "name": "thread",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The thread to reset."
+          ]
+        },
+        {
+          "name": "threadAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The pda that will own and manage the thread."
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "threadId",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
       "name": "incrementViaThread",
       "accounts": [
         {
@@ -222,6 +257,41 @@ export const IDL: ExtractoProgram = {
           "isSigner": false,
           "docs": [
             "Address to assign to the newly created thread."
+          ]
+        },
+        {
+          "name": "threadAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The pda that will own and manage the thread."
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "threadId",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "pauseThread",
+      "accounts": [
+        {
+          "name": "clockworkProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The Clockwork thread program."
+          ]
+        },
+        {
+          "name": "thread",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The thread to reset."
           ]
         },
         {
