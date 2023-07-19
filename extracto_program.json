@@ -96,7 +96,7 @@
           "isMut": true,
           "isSigner": false,
           "docs": [
-            "The thread to reset."
+            "The thread to pause."
           ]
         },
         {
@@ -108,12 +108,7 @@
           ]
         }
       ],
-      "args": [
-        {
-          "name": "threadId",
-          "type": "bytes"
-        }
-      ]
+      "args": []
     },
     {
       "name": "resumeThread",
@@ -143,12 +138,42 @@
           ]
         }
       ],
-      "args": [
+      "args": []
+    },
+    {
+      "name": "deleteThread",
+      "accounts": [
         {
-          "name": "threadId",
-          "type": "bytes"
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "clockworkProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The Clockwork thread program."
+          ]
+        },
+        {
+          "name": "thread",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The thread to reset."
+          ]
+        },
+        {
+          "name": "threadAuthority",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The pda that owns and manages the thread."
+          ]
         }
-      ]
+      ],
+      "args": []
     },
     {
       "name": "incrementViaThread",

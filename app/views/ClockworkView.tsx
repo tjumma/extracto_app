@@ -10,6 +10,8 @@ import { useNotificationContext } from "../contexts/NotificationContext"
 
 import { PublicKey, SystemProgram, } from "@solana/web3.js";
 
+const THREAD_AUTHORITY_SEED = "thread_authority"
+
 type CounterDataAccount = {
     count: number
 }
@@ -28,91 +30,143 @@ export const ClockworkView: React.FC = () => {
 
     const [counterDataAccount, setCounterDataAccount] = useState<CounterDataAccount | null>(null)
 
+    const [threadId, setThreadId] = useState<string | null>(null)
+    const [threadAuthority, setThreadAuthority] = useState<PublicKey | null>(null)
+    const [thread, setThread] = useState<PublicKey | null>(null)
+
     const startThread = async () => {
-        // 1️⃣ Prepare thread address
-        const threadId = "counter-" + new Date().getTime() / 1000;
-        const [threadAuthority] = PublicKey.findProgramAddressSync(
-            [anchor.utils.bytes.utf8.encode("thread_authority")], // 👈 make sure it matches on the prog side
+
+        const newThreadId = "counter-" + new Date().getTime() / 1000;
+
+        console.log(`threadId: ${newThreadId}`)
+
+        //get threadAuthority PDA address from seed
+        const [newThreadAuthorityAddress] = PublicKey.findProgramAddressSync(
+            [anchor.utils.bytes.utf8.encode(THREAD_AUTHORITY_SEED)], // 👈 make sure it matches on the prog side
             program.programId
         );
-        const [threadAddress, threadBump] = clockworkProvider.getThreadPDA(threadAuthority, threadId)
+
+        //derive threadAddress from threadAuthority and threadId
+        const [newThreadAddress] = clockworkProvider.getThreadPDA(newThreadAuthorityAddress, newThreadId)
 
         try {
             // 2️⃣ Ask our program to create a thread via CPI
             // and thus become the admin of that thread
             await program.methods
-                .startThread(Buffer.from(threadId))
+                .startThread(Buffer.from(newThreadId))
                 .accounts({
                     payer: publicKey,
                     systemProgram: SystemProgram.programId,
                     clockworkProgram: clockworkProvider.threadProgram.programId,
-                    thread: threadAddress,
-                    threadAuthority: threadAuthority,
+                    thread: newThreadAddress,
+                    threadAuthority: newThreadAuthorityAddress,
                     counter: counterAddress,
                 })
                 .rpc();
-            // await print_thread(clockworkProvider, threadAddress);
+
+            setThreadId(newThreadId)
+            setThreadAuthority(newThreadAuthorityAddress)
+            setThread(newThreadAddress)
+
+            showNotification({
+                status: "success",
+                title: "Thread started!",
+                description: `Thread has been started`,
+                link: `https://app.clockwork.xyz/threads/${newThreadAddress}?cluster=custom&clusterUrl=http://localhost:8899`,
+                linkText: "Thread"
+            })
         }
-        catch(e)
-        {
-            console.log(e)
+        catch (e) {
+            showNotification({
+                status: "error",
+                title: "Thread start error!",
+                description: `${e}`,
+            })
         }
     }
 
     const pauseThread = async () => {
-        const threadId = "counter-1689632307.698";
-        const [threadAuthority] = PublicKey.findProgramAddressSync(
-            [anchor.utils.bytes.utf8.encode("thread_authority")], // 👈 make sure it matches on the prog side
-            program.programId
-        );
-        const [threadAddress, threadBump] = clockworkProvider.getThreadPDA(threadAuthority, threadId)
-
         try {
             await program.methods
-                .pauseThread(Buffer.from(threadId))
+                .pauseThread()
                 .accounts({
                     clockworkProgram: clockworkProvider.threadProgram.programId,
-                    thread: threadAddress,
+                    thread: thread,
                     threadAuthority: threadAuthority,
                 })
                 .rpc();
-            // await print_thread(clockworkProvider, threadAddress);
+
+            showNotification({
+                status: "success",
+                title: "Thread paused!",
+                description: `Thread "${threadId}" has been paused`,
+            })
         }
-        catch(e)
-        {
-            console.log(e)
+        catch (e) {
+            showNotification({
+                status: "error",
+                title: "Thread pause error!",
+                description: `${e}`,
+            })
         }
     }
 
     const resumeThread = async () => {
-        const threadId = "counter-1689632307.698";
-        const [threadAuthority] = PublicKey.findProgramAddressSync(
-            [anchor.utils.bytes.utf8.encode("thread_authority")], // 👈 make sure it matches on the prog side
-            program.programId
-        );
-        const [threadAddress, threadBump] = clockworkProvider.getThreadPDA(threadAuthority, threadId)
-
         try {
             await program.methods
-                .resumeThread(Buffer.from(threadId))
+                .resumeThread()
                 .accounts({
                     clockworkProgram: clockworkProvider.threadProgram.programId,
-                    thread: threadAddress,
+                    thread: thread,
                     threadAuthority: threadAuthority,
                 })
                 .rpc();
-            // await print_thread(clockworkProvider, threadAddress);
+
+            showNotification({
+                status: "success",
+                title: "Thread resumed!",
+                description: `Thread "${threadId}" has been resumed`,
+            })
         }
-        catch(e)
-        {
-            console.log(e)
+        catch (e) {
+            showNotification({
+                status: "error",
+                title: "Thread resume error!",
+                description: `${e}`,
+            })
         }
     }
 
-    const getThreadAccount = async () => {
-        const address = new PublicKey("BXmN5X2ERLFdBGWMbapFcHtqRw52rUbhdcCcKyMW8qiJ")
-        const threadAccount = await clockworkProvider.getThreadAccount(address);
-        console.log(`Thread id ${threadAccount.id.toString()} is paused: ${threadAccount.paused}`)
+    const deleteThread = async () => {
+
+        try {
+            await program.methods
+                .deleteThread()
+                .accounts({
+                    payer: publicKey,
+                    clockworkProgram: clockworkProvider.threadProgram.programId,
+                    thread: thread,
+                    threadAuthority: threadAuthority
+                })
+                .rpc();
+
+            setThreadId(null)
+            setThreadAuthority(null)
+            setThread(null)
+
+            showNotification({
+                status: "success",
+                title: "Thread deleted!",
+                description: `Thread "${threadId}" has been deleted`,
+            })
+        }
+        catch (e) {
+            showNotification({
+                status: "error",
+                title: "Thread delete error!",
+                description: `${e}`,
+            })
+        }
     }
 
     useEffect(() => {
@@ -313,17 +367,22 @@ export const ClockworkView: React.FC = () => {
     }, [connection, counterAddress, program, publicKey])
 
     return (
-        <Flex direction="column" px={0} py={0} alignItems={"center"}>
-            <Text mt={10} mb={10}>ClockworkView</Text>
-            <Button isLoading={isInitializeLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
-            <Button isLoading={isIncrementLoading} onClick={increment} isDisabled={!publicKey} mb={5}>Increment manually</Button>
-            <Button isLoading={isResetLoading} onClick={reset} isDisabled={!publicKey} mb={5}>Reset counter</Button>
-            <Button onClick={startThread} isDisabled={!publicKey} mb={5}>Start thread</Button>
-            <Button onClick={pauseThread} isDisabled={!publicKey} mb={5}>Pause thread</Button>
-            <Button onClick={resumeThread} isDisabled={!publicKey} mb={5}>Resume thread</Button>
-            <Button onClick={fetchData} mb={5}>Fetch counter account manually</Button>
-            <Button onClick={getThreadAccount} mb={5}>Get thread id</Button>
-            <Text>{`Counter: ${counterDataAccount ? counterDataAccount.count : "null"}`}</Text>
+        <Flex direction={"row"} px={0} pb={20} pt={10}>
+            <Flex direction="column" alignItems={"center"} width="50%">
+                <Text mb={5}>{`Counter: ${counterDataAccount ? counterDataAccount.count : "null"}`}</Text>
+                <Text mb={5}>{`Current thread id: ${threadId}`}</Text>
+                <Text mb={5}>{`Current thread authority address: ${threadAuthority}`}</Text>
+            </Flex>
+            <Flex direction="column" alignItems={"center"} width="50%">
+                <Button isLoading={isInitializeLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
+                <Button isLoading={isIncrementLoading} onClick={increment} isDisabled={!publicKey} mb={5}>Increment manually</Button>
+                <Button isLoading={isResetLoading} onClick={reset} isDisabled={!publicKey} mb={5}>Reset counter</Button>
+                <Button onClick={startThread} isDisabled={!publicKey || !!thread} mb={5}>Start thread</Button>
+                <Button onClick={pauseThread} isDisabled={!publicKey || !thread} mb={5}>Pause thread</Button>
+                <Button onClick={resumeThread} isDisabled={!publicKey || !thread} mb={5}>Resume thread</Button>
+                <Button onClick={deleteThread} isDisabled={!publicKey || !thread} mb={5}>Delete thread</Button>
+                <Button onClick={fetchData} mb={5}>Fetch counter account manually</Button>
+            </Flex>
         </Flex>
     )
 }
