@@ -10,6 +10,7 @@ import { useNotificationContext } from "../contexts/NotificationContext"
 
 import { PublicKey, SystemProgram, } from "@solana/web3.js";
 
+const COUNTER_SEED = "counter";
 const THREAD_AUTHORITY_SEED = "thread_authority"
 
 type CounterDataAccount = {
@@ -20,19 +21,40 @@ export const ClockworkView: React.FC = () => {
 
     const { showNotification } = useNotificationContext()
 
-    const { program, counterAddress, clockworkProvider } = useAnchorContext()
+    const { program, clockworkProvider } = useAnchorContext()
     const { connection } = useConnection();
-    const { publicKey, sendTransaction, signTransaction } = useWallet()
+    const { publicKey, sendTransaction } = useWallet()
 
     const [isInitializeLoading, setIsInitializeLoading] = useState(false)
     const [isIncrementLoading, setIsIncrementLoading] = useState(false)
     const [isResetLoading, setIsResetLoading] = useState(false)
 
+    const [counterAddress, setCounterAddress] = useState<anchor.web3.PublicKey | null>(null)
     const [counterDataAccount, setCounterDataAccount] = useState<CounterDataAccount | null>(null)
 
     const [threadId, setThreadId] = useState<string | null>(null)
     const [threadAuthority, setThreadAuthority] = useState<PublicKey | null>(null)
     const [thread, setThread] = useState<PublicKey | null>(null)
+
+    useEffect(() => {
+        console.log("GETTING COUNTER ADDRESS AND FETCHING DATA ON MOUNT!")
+
+        if (program && publicKey) {
+            const [newCounterAddress, _bump] = PublicKey.findProgramAddressSync(
+                [anchor.utils.bytes.utf8.encode(COUNTER_SEED), program.provider.publicKey.toBuffer()],
+                program.programId
+            );
+
+            setCounterAddress(newCounterAddress)
+            fetchData()
+        }
+        else
+        {
+            setCounterAddress(null)
+            setCounterDataAccount(null)
+        }
+
+    }, [program, publicKey])
 
     const startThread = async () => {
 
@@ -168,11 +190,6 @@ export const ClockworkView: React.FC = () => {
             })
         }
     }
-
-    useEffect(() => {
-        console.log("FETCHING DATA ON MOUNT!")
-        fetchData()
-    }, [publicKey])
 
     const fetchData = async () => {
         console.log("Fetching counter account...")
@@ -369,6 +386,7 @@ export const ClockworkView: React.FC = () => {
     return (
         <Flex direction={"row"} px={0} pb={20} pt={10}>
             <Flex direction="column" alignItems={"center"} width="50%">
+                <Text mb={5}>{`Counter address: ${counterAddress}`}</Text>
                 <Text mb={5}>{`Counter: ${counterDataAccount ? counterDataAccount.count : "null"}`}</Text>
                 <Text mb={5}>{`Current thread id: ${threadId}`}</Text>
                 <Text mb={5}>{`Current thread authority address: ${threadAuthority}`}</Text>
