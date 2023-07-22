@@ -40,7 +40,7 @@
           ]
         },
         {
-          "name": "payer",
+          "name": "user",
           "isMut": true,
           "isSigner": true,
           "docs": [
@@ -84,6 +84,11 @@
       "name": "pauseThread",
       "accounts": [
         {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
           "name": "clockworkProgram",
           "isMut": false,
           "isSigner": false,
@@ -113,6 +118,11 @@
     {
       "name": "resumeThread",
       "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
         {
           "name": "clockworkProgram",
           "isMut": false,
@@ -144,7 +154,7 @@
       "name": "deleteThread",
       "accounts": [
         {
-          "name": "payer",
+          "name": "user",
           "isMut": true,
           "isSigner": true
         },
@@ -243,6 +253,10 @@
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
           {
             "name": "count",
             "type": "u64"

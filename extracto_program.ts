@@ -40,7 +40,7 @@ export type ExtractoProgram = {
           ]
         },
         {
-          "name": "payer",
+          "name": "user",
           "isMut": true,
           "isSigner": true,
           "docs": [
@@ -84,6 +84,11 @@ export type ExtractoProgram = {
       "name": "pauseThread",
       "accounts": [
         {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
           "name": "clockworkProgram",
           "isMut": false,
           "isSigner": false,
@@ -113,6 +118,11 @@ export type ExtractoProgram = {
     {
       "name": "resumeThread",
       "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
         {
           "name": "clockworkProgram",
           "isMut": false,
@@ -144,7 +154,7 @@ export type ExtractoProgram = {
       "name": "deleteThread",
       "accounts": [
         {
-          "name": "payer",
+          "name": "user",
           "isMut": true,
           "isSigner": true
         },
@@ -244,6 +254,10 @@ export type ExtractoProgram = {
         "kind": "struct",
         "fields": [
           {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
             "name": "count",
             "type": "u64"
           }
@@ -295,7 +309,7 @@ export const IDL: ExtractoProgram = {
           ]
         },
         {
-          "name": "payer",
+          "name": "user",
           "isMut": true,
           "isSigner": true,
           "docs": [
@@ -339,6 +353,11 @@ export const IDL: ExtractoProgram = {
       "name": "pauseThread",
       "accounts": [
         {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
           "name": "clockworkProgram",
           "isMut": false,
           "isSigner": false,
@@ -368,6 +387,11 @@ export const IDL: ExtractoProgram = {
     {
       "name": "resumeThread",
       "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
         {
           "name": "clockworkProgram",
           "isMut": false,
@@ -399,7 +423,7 @@ export const IDL: ExtractoProgram = {
       "name": "deleteThread",
       "accounts": [
         {
-          "name": "payer",
+          "name": "user",
           "isMut": true,
           "isSigner": true
         },
@@ -498,6 +522,10 @@ export const IDL: ExtractoProgram = {
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
           {
             "name": "count",
             "type": "u64"

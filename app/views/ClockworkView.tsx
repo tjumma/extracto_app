@@ -12,8 +12,10 @@ import { PublicKey, SystemProgram, } from "@solana/web3.js";
 
 const COUNTER_SEED = "counter";
 const THREAD_AUTHORITY_SEED = "thread_authority"
+const GAME_COUNTER_ID = "game_counter"
 
 type CounterDataAccount = {
+    authority: PublicKey,
     count: number
 }
 
@@ -58,13 +60,14 @@ export const ClockworkView: React.FC = () => {
 
     const startThread = async () => {
 
-        const newThreadId = "counter-" + new Date().getTime() / 1000;
+        // const newThreadId = "counter-" + new Date().getTime() / 1000;
+        const newThreadId = GAME_COUNTER_ID;
 
         console.log(`threadId: ${newThreadId}`)
 
         //get threadAuthority PDA address from seed
         const [newThreadAuthorityAddress] = PublicKey.findProgramAddressSync(
-            [anchor.utils.bytes.utf8.encode(THREAD_AUTHORITY_SEED)], // 👈 make sure it matches on the prog side
+            [anchor.utils.bytes.utf8.encode(THREAD_AUTHORITY_SEED), program.provider.publicKey.toBuffer()], // 👈 make sure it matches on the prog side
             program.programId
         );
 
@@ -77,7 +80,7 @@ export const ClockworkView: React.FC = () => {
             await program.methods
                 .startThread(Buffer.from(newThreadId))
                 .accounts({
-                    payer: publicKey,
+                    user: publicKey,
                     systemProgram: SystemProgram.programId,
                     clockworkProgram: clockworkProvider.threadProgram.programId,
                     thread: newThreadAddress,
@@ -112,6 +115,7 @@ export const ClockworkView: React.FC = () => {
             await program.methods
                 .pauseThread()
                 .accounts({
+                    user: publicKey,
                     clockworkProgram: clockworkProvider.threadProgram.programId,
                     thread: thread,
                     threadAuthority: threadAuthority,
@@ -138,6 +142,7 @@ export const ClockworkView: React.FC = () => {
             await program.methods
                 .resumeThread()
                 .accounts({
+                    user: publicKey,
                     clockworkProgram: clockworkProvider.threadProgram.programId,
                     thread: thread,
                     threadAuthority: threadAuthority,
@@ -165,7 +170,7 @@ export const ClockworkView: React.FC = () => {
             await program.methods
                 .deleteThread()
                 .accounts({
-                    payer: publicKey,
+                    user: publicKey,
                     clockworkProgram: clockworkProvider.threadProgram.programId,
                     thread: thread,
                     threadAuthority: threadAuthority
@@ -386,10 +391,10 @@ export const ClockworkView: React.FC = () => {
     return (
         <Flex direction={"row"} px={0} pb={20} pt={10}>
             <Flex direction="column" alignItems={"center"} width="50%">
-                <Text mb={5}>{`Counter address: ${counterAddress}`}</Text>
+                <Text mb={5} textAlign={"center"}>{`Counter address: ${counterAddress}`}</Text>
                 <Text mb={5}>{`Counter: ${counterDataAccount ? counterDataAccount.count : "null"}`}</Text>
-                <Text mb={5}>{`Current thread id: ${threadId}`}</Text>
-                <Text mb={5}>{`Current thread authority address: ${threadAuthority}`}</Text>
+                <Text mb={5}>{`Current thread id: ${counterDataAccount ? threadId : null}`}</Text>
+                <Text mb={5}>{`Current thread authority address: ${counterDataAccount ? threadAuthority : null}`}</Text>
             </Flex>
             <Flex direction="column" alignItems={"center"} width="50%">
                 <Button isLoading={isInitializeLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
