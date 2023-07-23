@@ -2,19 +2,20 @@
 
 import * as anchor from "@coral-xyz/anchor"
 import { Button, Flex, Text } from "@chakra-ui/react"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useWallet, useConnection } from "@solana/wallet-adapter-react"
 
 import { useAnchorContext } from "../contexts/AnchorContext"
 import { useNotificationContext } from "../contexts/NotificationContext"
 
 import { PublicKey, SystemProgram, } from "@solana/web3.js";
+import { InitializeCounter } from "../components/InitializeCounter"
 
 const COUNTER_SEED = "counter";
 const THREAD_AUTHORITY_SEED = "thread_authority"
 const GAME_COUNTER_ID = "game_counter"
 
-type CounterDataAccount = {
+export type CounterDataAccount = {
     authority: PublicKey,
     count: number
 }
@@ -27,36 +28,51 @@ export const ClockworkView: React.FC = () => {
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet()
 
-    const [isInitializeLoading, setIsInitializeLoading] = useState(false)
     const [isIncrementLoading, setIsIncrementLoading] = useState(false)
     const [isResetLoading, setIsResetLoading] = useState(false)
 
-    const [counterAddress, setCounterAddress] = useState<anchor.web3.PublicKey | null>(null)
+    // const [counterAddress, setCounterAddress] = useState<anchor.web3.PublicKey | null>(null)
     const [counterDataAccount, setCounterDataAccount] = useState<CounterDataAccount | null>(null)
 
     const [threadId, setThreadId] = useState<string | null>(null)
     const [threadAuthority, setThreadAuthority] = useState<PublicKey | null>(null)
     const [thread, setThread] = useState<PublicKey | null>(null)
 
-    useEffect(() => {
-        console.log("GETTING COUNTER ADDRESS AND FETCHING DATA ON MOUNT!")
-
+    const counterAddress = useMemo(() => {
         if (program && publicKey) {
             const [newCounterAddress, _bump] = PublicKey.findProgramAddressSync(
                 [anchor.utils.bytes.utf8.encode(COUNTER_SEED), program.provider.publicKey.toBuffer()],
                 program.programId
             );
 
-            setCounterAddress(newCounterAddress)
-            fetchData()
+            return newCounterAddress;
         }
-        else
-        {
-            setCounterAddress(null)
+        else {
+            return null;
+        }
+    }, [publicKey, program])
+
+    useEffect(() => {
+        fetchCounterAccount();
+    }, [counterAddress])
+
+    const fetchCounterAccount = async () => {
+        console.log("Fetching counter account...")
+        if (counterAddress) {
+            try {
+                const newCounterAccount = await program.account.counter.fetch(counterAddress)
+                setCounterDataAccount(newCounterAccount)
+                console.log(newCounterAccount.count)
+            } catch (error) {
+                console.log(`Error fetching counter state: ${error}`)
+                setCounterDataAccount(null)
+            }
+        }
+        else {
+            console.log("no counter address yet")
             setCounterDataAccount(null)
         }
-
-    }, [program, publicKey])
+    };
 
     const startThread = async () => {
 
@@ -196,84 +212,6 @@ export const ClockworkView: React.FC = () => {
         }
     }
 
-    const fetchData = async () => {
-        console.log("Fetching counter account...")
-        if (counterAddress) {
-            try {
-                const counterAccount = await program.account.counter.fetch(counterAddress)
-                console.log(counterAccount.count.toString())
-                setCounterDataAccount(counterAccount)
-            } catch (error) {
-                console.log(`Error fetching counter state: ${error}`)
-                setCounterDataAccount(null)
-            }
-        }
-        else {
-            setCounterDataAccount(null)
-        }
-    }
-
-    const initialize = useCallback(async () => {
-        console.log("Initialize");
-
-        if (counterDataAccount) {
-            console.log("Counter account is already initialized");
-
-            showNotification({
-                status: "info",
-                title: "Already initialized!",
-                description: `Counter account is already initialized`,
-                link: `https://solana.fm/address/${counterAddress}?cluster=http://localhost:8899`,
-                linkText: "Counter account"
-            })
-        }
-        else {
-            try {
-                setIsInitializeLoading(true)
-
-                const tx = await program.methods
-                    .initialize()
-                    .accounts({
-                        counter: counterAddress,
-                        user: publicKey,
-                        systemProgram: anchor.web3.SystemProgram.programId,
-                    })
-                    .transaction()
-
-                const txSig = await sendTransaction(tx, connection, {
-                    skipPreflight: true,
-                })
-
-                const latestBlockHash = await connection.getLatestBlockhash();
-
-                await connection.confirmTransaction({
-                    blockhash: latestBlockHash.blockhash,
-                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                    signature: txSig,
-                })
-
-                setIsInitializeLoading(false)
-
-                showNotification({
-                    status: "success",
-                    title: "Counter initialized!",
-                    description: `Counter account initialized`,
-                    link: `https://solana.fm/tx/${txSig}?cluster=http://localhost:8899`,
-                    linkText: "Transaction"
-                })
-            }
-            catch (e) {
-                setIsInitializeLoading(false)
-
-                showNotification({
-                    status: "error",
-                    title: "Initialize error!",
-                    description: `${e}`,
-                })
-            }
-        }
-    }, [counterAddress, publicKey, counterDataAccount])
-
     const increment = useCallback(async () => {
         console.log("Increment");
 
@@ -397,14 +335,15 @@ export const ClockworkView: React.FC = () => {
                 <Text mb={5}>{`Current thread authority address: ${counterDataAccount ? threadAuthority : null}`}</Text>
             </Flex>
             <Flex direction="column" alignItems={"center"} width="50%">
-                <Button isLoading={isInitializeLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
+                <InitializeCounter counterAddress={counterAddress} counterDataAccount={counterDataAccount} />
+                {/* <Button isLoading={isInitializeLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button> */}
                 <Button isLoading={isIncrementLoading} onClick={increment} isDisabled={!publicKey} mb={5}>Increment manually</Button>
                 <Button isLoading={isResetLoading} onClick={reset} isDisabled={!publicKey} mb={5}>Reset counter</Button>
                 <Button onClick={startThread} isDisabled={!publicKey || !!thread} mb={5}>Start thread</Button>
                 <Button onClick={pauseThread} isDisabled={!publicKey || !thread} mb={5}>Pause thread</Button>
                 <Button onClick={resumeThread} isDisabled={!publicKey || !thread} mb={5}>Resume thread</Button>
                 <Button onClick={deleteThread} isDisabled={!publicKey || !thread} mb={5}>Delete thread</Button>
-                <Button onClick={fetchData} mb={5}>Fetch counter account manually</Button>
+                <Button onClick={fetchCounterAccount} mb={5}>Fetch counter account manually</Button>
             </Flex>
         </Flex>
     )
