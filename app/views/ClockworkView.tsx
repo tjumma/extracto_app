@@ -10,6 +10,8 @@ import { useNotificationContext } from "../contexts/NotificationContext"
 
 import { PublicKey, SystemProgram, } from "@solana/web3.js";
 import { InitializeCounter } from "../components/InitializeCounter"
+import { IncrementCounter } from "../components/IncrementCounter"
+import { ResetCounter } from "../components/ResetCounter"
 
 const COUNTER_SEED = "counter";
 const THREAD_AUTHORITY_SEED = "thread_authority"
@@ -28,7 +30,6 @@ export const ClockworkView: React.FC = () => {
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet()
 
-    const [isIncrementLoading, setIsIncrementLoading] = useState(false)
     const [isResetLoading, setIsResetLoading] = useState(false)
 
     // const [counterAddress, setCounterAddress] = useState<anchor.web3.PublicKey | null>(null)
@@ -212,100 +213,6 @@ export const ClockworkView: React.FC = () => {
         }
     }
 
-    const increment = useCallback(async () => {
-        console.log("Increment");
-
-        try {
-            setIsIncrementLoading(true)
-
-            const tx = await program.methods
-                .increment()
-                .accounts({
-                    counter: counterAddress,
-                    user: publicKey,
-                })
-                .transaction()
-
-            const txSig = await sendTransaction(tx, connection, {
-                skipPreflight: true,
-            })
-
-            const latestBlockHash = await connection.getLatestBlockhash();
-
-            await connection.confirmTransaction({
-                blockhash: latestBlockHash.blockhash,
-                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                signature: txSig,
-            })
-
-            setIsIncrementLoading(false)
-
-            showNotification({
-                status: "success",
-                title: "Counter incremented!",
-                description: `Counter account incremented`,
-                link: `https://solana.fm/tx/${txSig}?cluster=http://localhost:8899`,
-                linkText: "Transaction"
-            })
-        }
-        catch (e) {
-            setIsIncrementLoading(false)
-
-            showNotification({
-                status: "error",
-                title: "Increment error!",
-                description: `${e}`,
-            })
-        }
-    }, [counterAddress, publicKey])
-
-    const reset = useCallback(async () => {
-        console.log("Reset");
-
-        try {
-            setIsResetLoading(true)
-
-            const tx = await program.methods
-                .reset()
-                .accounts({
-                    counter: counterAddress,
-                    user: publicKey,
-                })
-                .transaction()
-
-            const txSig = await sendTransaction(tx, connection, {
-                skipPreflight: true,
-            })
-
-            const latestBlockHash = await connection.getLatestBlockhash();
-
-            await connection.confirmTransaction({
-                blockhash: latestBlockHash.blockhash,
-                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                signature: txSig,
-            })
-
-            setIsResetLoading(false)
-
-            showNotification({
-                status: "success",
-                title: "Counter reset!",
-                description: `Counter has been reset`,
-                link: `https://solana.fm/tx/${txSig}?cluster=http://localhost:8899`,
-                linkText: "Transaction"
-            })
-        }
-        catch (e) {
-            setIsResetLoading(false)
-
-            showNotification({
-                status: "error",
-                title: "Reset error!",
-                description: `${e}`,
-            })
-        }
-    }, [counterAddress, publicKey])
-
     useEffect(() => {
         if (!counterAddress) return
 
@@ -336,9 +243,8 @@ export const ClockworkView: React.FC = () => {
             </Flex>
             <Flex direction="column" alignItems={"center"} width="50%">
                 <InitializeCounter counterAddress={counterAddress} counterDataAccount={counterDataAccount} />
-                {/* <Button isLoading={isInitializeLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button> */}
-                <Button isLoading={isIncrementLoading} onClick={increment} isDisabled={!publicKey} mb={5}>Increment manually</Button>
-                <Button isLoading={isResetLoading} onClick={reset} isDisabled={!publicKey} mb={5}>Reset counter</Button>
+                <IncrementCounter counterAddress={counterAddress} />
+                <ResetCounter counterAddress={counterAddress} />
                 <Button onClick={startThread} isDisabled={!publicKey || !!thread} mb={5}>Start thread</Button>
                 <Button onClick={pauseThread} isDisabled={!publicKey || !thread} mb={5}>Pause thread</Button>
                 <Button onClick={resumeThread} isDisabled={!publicKey || !thread} mb={5}>Resume thread</Button>

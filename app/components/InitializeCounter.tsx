@@ -18,10 +18,13 @@ export const InitializeCounter: FC<Props> = ({ counterAddress, counterDataAccoun
     const { connection } = useConnection();
     const { showNotification } = useNotificationContext()
 
-    const [isInitializeLoading, setIsInitializeLoading] = useState(false)
+    const [isLoading, setLoading] = useState(false)
 
     const initialize = useCallback(async () => {
-        console.log("Initialize");
+        console.log("Initialize counter");
+
+        if (!publicKey || !program || !counterAddress)
+            return;
 
         if (counterDataAccount) {
             console.log("Counter account is already initialized");
@@ -36,7 +39,7 @@ export const InitializeCounter: FC<Props> = ({ counterAddress, counterDataAccoun
         }
         else {
             try {
-                setIsInitializeLoading(true)
+                setLoading(true)
 
                 const tx = await program.methods
                     .initialize()
@@ -59,7 +62,7 @@ export const InitializeCounter: FC<Props> = ({ counterAddress, counterDataAccoun
                     signature: txSig,
                 })
 
-                setIsInitializeLoading(false)
+                setLoading(false)
 
                 showNotification({
                     status: "success",
@@ -70,7 +73,7 @@ export const InitializeCounter: FC<Props> = ({ counterAddress, counterDataAccoun
                 })
             }
             catch (e) {
-                setIsInitializeLoading(false)
+                setLoading(false)
 
                 showNotification({
                     status: "error",
@@ -82,6 +85,6 @@ export const InitializeCounter: FC<Props> = ({ counterAddress, counterDataAccoun
     }, [publicKey, counterAddress, counterDataAccount])
 
     return (
-        <Button isLoading={isInitializeLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
+        <Button isLoading={isLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
     )
 }
