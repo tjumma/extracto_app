@@ -1,3 +1,5 @@
+'use client'
+
 import { FC, useCallback, useState } from "react"
 import * as anchor from "@coral-xyz/anchor"
 import { Button } from "@chakra-ui/react";
@@ -85,6 +87,6 @@ export const InitializeCounter: FC<Props> = ({ counterAddress, counterDataAccoun
     }, [publicKey, counterAddress, counterDataAccount])
 
     return (
-        <Button isLoading={isLoading} onClick={initialize} isDisabled={!publicKey} mb={5}>Initialize counter account</Button>
+        <Button isLoading={isLoading} onClick={initialize} isDisabled={!publicKey || !program || !counterAddress} mb={5}>Initialize counter account</Button>
     )
 }

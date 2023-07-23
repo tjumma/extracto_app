@@ -1,3 +1,5 @@
+'use client'
+
 import * as anchor from "@coral-xyz/anchor"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 import { FC, useCallback, useState } from 'react'
@@ -68,6 +70,6 @@ export const ResetCounter: FC<Props> = ({ counterAddress }) => {
     }, [publicKey, counterAddress])
 
     return (
-        <Button isLoading={isLoading} onClick={reset} isDisabled={!publicKey} mb={5}>Reset counter</Button>
+        <Button isLoading={isLoading} onClick={reset} isDisabled={!publicKey || !program || !counterAddress} mb={5}>Reset counter</Button>
     )
 }

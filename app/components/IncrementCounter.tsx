@@ -1,3 +1,5 @@
+'use client'
+
 import * as anchor from "@coral-xyz/anchor"
 import { Button } from "@chakra-ui/react"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react"
@@ -69,6 +71,6 @@ export const IncrementCounter: FC<Props> = ({ counterAddress }) => {
     }, [publicKey, counterAddress])
 
     return (
-        <Button isLoading={isLoading} onClick={increment} isDisabled={!publicKey} mb={5}>Increment manually</Button>
+        <Button isLoading={isLoading} onClick={increment} isDisabled={!publicKey || !program || !counterAddress} mb={5}>Increment manually</Button>
     )
 }
