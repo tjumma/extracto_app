@@ -1,11 +1,13 @@
 'use client'
 
 import * as anchor from "@coral-xyz/anchor"
-import { FC, ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
+import { FC, ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useAnchorContext } from "./AnchorContext";
 import { Thread } from "@clockwork-xyz/sdk";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
+import { incrementCounter } from "../functions/incrementCounter";
+import { useNotificationContext } from "./NotificationContext";
 
 const COUNTER_SEED = "counter";
 const THREAD_AUTHORITY_SEED = "thread_authority"
@@ -22,7 +24,8 @@ export interface GameContextState {
     threadId: string,
     threadAuthority: PublicKey,
     thread: PublicKey,
-    threadDataAccount: Thread | null
+    threadDataAccount: Thread | null,
+    incrementCounterCallback: () => Promise<void>
 }
 
 export const GameContext = createContext<GameContextState>({} as GameContextState);
@@ -35,7 +38,8 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
 
     const { program, clockworkProvider } = useAnchorContext()
     const { connection } = useConnection();
-    const { publicKey } = useWallet()
+    const { publicKey, sendTransaction } = useWallet()
+    const { showNotification } = useNotificationContext()
 
     const [counterDataAccount, setCounterDataAccount] = useState<CounterDataAccount | null>(null)
     const [threadDataAccount, setThreadDataAccount] = useState<Thread | null>(null)
@@ -150,6 +154,10 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         }
     }, [connection, thread, program, publicKey])
 
+    const incrementCounterCallback = useCallback(async () => {
+        await incrementCounter(publicKey, program, counterAddress, sendTransaction, connection, showNotification)
+    }, [publicKey, counterAddress])
+
     return (
         <GameContext.Provider value={{
             counterAddress,
@@ -157,7 +165,8 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
             threadId,
             threadAuthority,
             thread,
-            threadDataAccount
+            threadDataAccount,
+            incrementCounterCallback
         }}>
             {children}
         </GameContext.Provider>

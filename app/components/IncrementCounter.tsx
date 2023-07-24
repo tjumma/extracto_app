@@ -19,7 +19,7 @@ export const IncrementCounter: FC = () => {
     const [isLoading, setLoading] = useState(false)
 
     const incrementCounterCallback = useCallback(async () => {
-        await incrementCounter(publicKey, program, counterAddress, setLoading, sendTransaction, connection, showNotification)
+        await incrementCounter(publicKey, program, counterAddress, sendTransaction, connection, showNotification, setLoading)
     }, [publicKey, counterAddress])
 
     return (

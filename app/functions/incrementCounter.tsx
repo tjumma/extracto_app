@@ -1,11 +1,11 @@
-export const incrementCounter = async (publicKey, program, counterAddress, setLoading, sendTransaction, connection, showNotification) => {
+export const incrementCounter = async (publicKey, program, counterAddress, sendTransaction, connection, showNotification, setLoading?) => {
     console.log("Increment counter");
 
     if (!publicKey || !program || !counterAddress)
         return;
 
     try {
-        setLoading(true)
+        if (setLoading) setLoading(true)
 
         const tx = await program.methods
             .increment()
@@ -27,7 +27,7 @@ export const incrementCounter = async (publicKey, program, counterAddress, setLo
             signature: txSig,
         })
 
-        setLoading(false)
+        if (setLoading) setLoading(false)
 
         showNotification({
             status: "success",
@@ -38,7 +38,7 @@ export const incrementCounter = async (publicKey, program, counterAddress, setLo
         })
     }
     catch (e) {
-        setLoading(false)
+        if (setLoading) setLoading(false)
 
         showNotification({
             status: "error",

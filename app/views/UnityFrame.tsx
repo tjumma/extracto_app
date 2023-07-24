@@ -3,7 +3,9 @@
 import { Flex, Text, Box, Progress, Spacer, Center, AbsoluteCenter } from "@chakra-ui/react"
 import { Unity, useUnityContext } from "react-unity-webgl";
 import { useUnityFrameContext } from "../contexts/UnityFrameContext";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
+import { useGameContext } from "../contexts/GameContext";
 
 const isBrowser = () => typeof window !== 'undefined';
 
@@ -21,8 +23,8 @@ function getWindowPixelRatio() {
 export const UnityFrame: React.FC = () => {
 
     const { showUnityFrame } = useUnityFrameContext()
-
     const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
+    const { incrementCounterCallback } = useGameContext()
 
     useEffect(
         function () {
@@ -46,7 +48,7 @@ export const UnityFrame: React.FC = () => {
         [pixelRatio]
     );
 
-    const { unityProvider, requestFullscreen, isLoaded, loadingProgression, sendMessage } = useUnityContext({
+    const { unityProvider, requestFullscreen, isLoaded, loadingProgression, sendMessage, addEventListener, removeEventListener } = useUnityContext({
         loaderUrl: "build/extracto.loader.js",
         dataUrl: "build/extracto.data",
         frameworkUrl: "build/extracto.framework.js",
@@ -65,12 +67,30 @@ export const UnityFrame: React.FC = () => {
         sendMessage("ReactToUnity", "OnWalletConnected", message);
     }
 
+    // const handleIncrementCounterFromUnity = useCallback((message) => {
+    //     console.log(`React got IncrementCounterFromUnity: ${message}`);
+    //     return null
+    // }, []);
+
+    function handleIncrementCounterFromUnity(message: ReactUnityEventParameter) {
+        console.log(`React got IncrementCounterFromUnity: ${message}`);
+        incrementCounterCallback();
+        return null;
+    };
+
+    useEffect(() => {
+        addEventListener("IncrementCounterFromUnity", handleIncrementCounterFromUnity);
+        return () => {
+            removeEventListener("IncrementCounterFromUnity", handleIncrementCounterFromUnity);
+        };
+    }, [addEventListener, removeEventListener, handleIncrementCounterFromUnity]);
+
     return (
         <>
             <Flex display={showUnityFrame ? "flex" : "none"} direction="column" flex={"1 0 0px"} px={0} py={0} alignItems={"center"}>
                 <Box flex={"1 0 0px"} width={"100%"} position={"relative"}>
                     {!isLoaded && <AbsoluteCenter>
-                    <Text>Loading...</Text>
+                        <Text>Loading...</Text>
                     </AbsoluteCenter>}
                     <Unity
                         unityProvider={unityProvider}
