@@ -17,11 +17,11 @@ export const ResetCounter: FC = () => {
     const { connection } = useConnection();
     const { showNotification } = useNotificationContext()
 
-    const reset = useCallback(async () => {
+    const resetCounterCallback = useCallback(async () => {
         await resetCounter(publicKey, program, counterAddress, setLoading, sendTransaction, connection, showNotification)
     }, [publicKey, counterAddress])
 
     return (
-        <Button isLoading={isLoading} onClick={reset} isDisabled={!publicKey || !program || !counterAddress} mb={5}>Reset counter</Button>
+        <Button isLoading={isLoading} onClick={resetCounterCallback} isDisabled={!publicKey || !program || !counterAddress} mb={5}>Reset counter</Button>
     )
 }

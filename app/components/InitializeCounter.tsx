@@ -18,11 +18,11 @@ export const InitializeCounter: FC = () => {
 
     const [isLoading, setLoading] = useState(false)
 
-    const initialize = useCallback(async () => {
+    const initializeCounterCallback = useCallback(async () => {
         await initializeCounter(publicKey, program, counterAddress, counterDataAccount, showNotification, setLoading, sendTransaction, connection)
     }, [publicKey, counterAddress, counterDataAccount])
 
     return (
-        <Button isLoading={isLoading} onClick={initialize} isDisabled={!publicKey || !program || !counterAddress} mb={5}>Initialize counter account</Button>
+        <Button isLoading={isLoading} onClick={initializeCounterCallback} isDisabled={!publicKey || !program || !counterAddress} mb={5}>Initialize counter account</Button>
     )
 }

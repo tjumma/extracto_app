@@ -18,11 +18,11 @@ export const IncrementCounter: FC = () => {
 
     const [isLoading, setLoading] = useState(false)
 
-    const increment = useCallback(async () => {
+    const incrementCounterCallback = useCallback(async () => {
         await incrementCounter(publicKey, program, counterAddress, setLoading, sendTransaction, connection, showNotification)
     }, [publicKey, counterAddress])
 
     return (
-        <Button isLoading={isLoading} onClick={increment} isDisabled={!publicKey || !program || !counterAddress} mb={5}>Increment manually</Button>
+        <Button isLoading={isLoading} onClick={incrementCounterCallback} isDisabled={!publicKey || !program || !counterAddress} mb={5}>Increment manually</Button>
     )
 }
