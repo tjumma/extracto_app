@@ -2,7 +2,7 @@
 
 import { Flex, Text, Box, Progress, Spacer, Center, AbsoluteCenter } from "@chakra-ui/react"
 import { Unity, useUnityContext } from "react-unity-webgl";
-import { useGameContext } from "../contexts/GameContext";
+import { useUnityFrameContext } from "../contexts/UnityFrameContext";
 import { useEffect, useState } from "react";
 
 const isBrowser = () => typeof window !== 'undefined';
@@ -20,7 +20,7 @@ function getWindowPixelRatio() {
 
 export const UnityFrame: React.FC = () => {
 
-    const { showGame } = useGameContext()
+    const { showUnityFrame: showGame } = useUnityFrameContext()
 
     const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
 
@@ -46,7 +46,7 @@ export const UnityFrame: React.FC = () => {
         [pixelRatio]
     );
 
-    const { unityProvider, requestFullscreen, isLoaded, loadingProgression } = useUnityContext({
+    const { unityProvider, requestFullscreen, isLoaded, loadingProgression, sendMessage } = useUnityContext({
         loaderUrl: "build/extracto.loader.js",
         dataUrl: "build/extracto.data",
         frameworkUrl: "build/extracto.framework.js",
@@ -59,6 +59,10 @@ export const UnityFrame: React.FC = () => {
     function handleClickFullscreen(isFullScreen: boolean) {
         console.log("Go fullscreen");
         requestFullscreen(isFullScreen);
+    }
+
+    function handleSendMessageToUnity(message: string) {
+        sendMessage("ReactToUnity", "OnWalletConnected", message);
     }
 
     return (
@@ -75,6 +79,7 @@ export const UnityFrame: React.FC = () => {
                         devicePixelRatio={pixelRatio}
                     />
                     {isLoaded && <button style={{ right: "20px", top: "20px", position: "absolute" }} className="fullscreen-button" onClick={() => handleClickFullscreen(true)}>Go fullscreen</button>}
+                    {isLoaded && <button style={{ right: "20px", bottom: "20px", position: "absolute" }} className="fullscreen-button" onClick={() => handleSendMessageToUnity("some publicKey")}>Send message to Unity</button>}
                     {!isLoaded && <Progress style={{ left: "0px", bottom: "0px", position: "absolute", width: "100%" }} hasStripe value={loadingProgression * 100} size={'sm'} />}
                 </Box>
             </Flex>

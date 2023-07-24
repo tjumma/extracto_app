@@ -2,11 +2,11 @@
 
 import { Flex, Text } from "@chakra-ui/react"
 import { useEffect } from "react";
-import { useGameContext } from "../contexts/GameContext";
+import { useUnityFrameContext } from "../contexts/UnityFrameContext";
 
 export const GameView: React.FC = () => {
 
-    const { showGame, setShowGame } = useGameContext()
+    const { showUnityFrame: showGame, setShowUnityFrame: setShowGame } = useUnityFrameContext()
 
     useEffect(() => {
         setShowGame(true)

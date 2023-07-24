@@ -6,7 +6,7 @@ import { CacheProvider } from '@chakra-ui/next-js'
 import { ChakraProvider, ColorModeScript, Flex, extendTheme } from '@chakra-ui/react'
 import { NavBar } from './components/NavBar'
 import { UnityFrame } from './views/UnityFrame'
-import { GameContextProvider } from './contexts/GameContext'
+import { UnityFrameContextProvider } from './contexts/UnityFrameContext'
 import { Wallet } from './components/Wallet'
 import { AnchorContextProvider } from './contexts/AnchorContext'
 import { NotificationContextProvider } from './contexts/NotificationContext'
@@ -33,13 +33,13 @@ export default function RootLayout({
             <NotificationContextProvider>
               <Wallet>
                 <AnchorContextProvider>
-                  <GameContextProvider>
+                  <UnityFrameContextProvider>
                     <Flex direction={"column"} height="100vh">
                       <NavBar />
                       {children}
                       <UnityFrame />
                     </Flex>
-                  </GameContextProvider>
+                  </UnityFrameContextProvider>
                 </AnchorContextProvider>
               </Wallet>
             </NotificationContextProvider>
