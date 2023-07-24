@@ -20,7 +20,7 @@ function getWindowPixelRatio() {
 
 export const UnityFrame: React.FC = () => {
 
-    const { showUnityFrame: showGame } = useUnityFrameContext()
+    const { showUnityFrame } = useUnityFrameContext()
 
     const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
 
@@ -67,7 +67,7 @@ export const UnityFrame: React.FC = () => {
 
     return (
         <>
-            <Flex display={showGame ? "flex" : "none"} direction="column" flex={"1 0 0px"} px={0} py={0} alignItems={"center"}>
+            <Flex display={showUnityFrame ? "flex" : "none"} direction="column" flex={"1 0 0px"} px={0} py={0} alignItems={"center"}>
                 <Box flex={"1 0 0px"} width={"100%"} position={"relative"}>
                     {!isLoaded && <AbsoluteCenter>
                     <Text>Loading...</Text>

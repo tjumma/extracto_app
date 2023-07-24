@@ -3,18 +3,14 @@
 import { FC, useCallback, useState } from "react"
 import * as anchor from "@coral-xyz/anchor"
 import { Button } from "@chakra-ui/react";
-import { CounterDataAccount } from "../views/ClockworkView";
 import { useNotificationContext } from "../contexts/NotificationContext";
 import { useAnchorContext } from "../contexts/AnchorContext";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useGameContext } from "../contexts/GameContext";
 
-interface Props {
-    counterAddress: anchor.web3.PublicKey,
-    counterDataAccount: CounterDataAccount | null
-}
+export const InitializeCounter: FC = () => {
 
-export const InitializeCounter: FC<Props> = ({ counterAddress, counterDataAccount }) => {
-
+    const { counterAddress, counterDataAccount } = useGameContext()
     const { publicKey, sendTransaction } = useWallet()
     const { program } = useAnchorContext()
     const { connection } = useConnection();

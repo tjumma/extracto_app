@@ -1,18 +1,15 @@
 'use client'
 
-import * as anchor from "@coral-xyz/anchor"
 import { Button } from "@chakra-ui/react"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 import { FC, useCallback, useState } from "react"
 import { useAnchorContext } from "../contexts/AnchorContext"
 import { useNotificationContext } from "../contexts/NotificationContext"
+import { useGameContext } from "../contexts/GameContext"
 
-interface Props {
-    counterAddress: anchor.web3.PublicKey,
-}
+export const IncrementCounter: FC = () => {
 
-export const IncrementCounter: FC<Props> = ({ counterAddress }) => {
-
+    const { counterAddress } = useGameContext()
     const { publicKey, sendTransaction } = useWallet()
     const { program } = useAnchorContext()
     const { connection } = useConnection();

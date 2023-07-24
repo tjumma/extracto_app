@@ -10,6 +10,7 @@ import { UnityFrameContextProvider } from './contexts/UnityFrameContext'
 import { Wallet } from './components/Wallet'
 import { AnchorContextProvider } from './contexts/AnchorContext'
 import { NotificationContextProvider } from './contexts/NotificationContext'
+import { GameContextProvider } from './contexts/GameContext'
 
 export default function RootLayout({
   children,
@@ -33,13 +34,15 @@ export default function RootLayout({
             <NotificationContextProvider>
               <Wallet>
                 <AnchorContextProvider>
-                  <UnityFrameContextProvider>
-                    <Flex direction={"column"} height="100vh">
-                      <NavBar />
-                      {children}
-                      <UnityFrame />
-                    </Flex>
-                  </UnityFrameContextProvider>
+                  <GameContextProvider>
+                    <UnityFrameContextProvider>
+                      <Flex direction={"column"} height="100vh">
+                        <NavBar />
+                        {children}
+                        <UnityFrame />
+                      </Flex>
+                    </UnityFrameContextProvider>
+                  </GameContextProvider>
                 </AnchorContextProvider>
               </Wallet>
             </NotificationContextProvider>

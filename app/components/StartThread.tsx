@@ -5,19 +5,12 @@ import { FC, useCallback } from 'react'
 import { useNotificationContext } from '../contexts/NotificationContext'
 import { useAnchorContext } from '../contexts/AnchorContext'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey, SystemProgram } from "@solana/web3.js";
-import { Thread } from '@clockwork-xyz/sdk'
+import { SystemProgram } from "@solana/web3.js";
+import { useGameContext } from '../contexts/GameContext'
 
-interface Props {
-    counterAddress: PublicKey,
-    threadId: string,
-    threadAuthority: PublicKey,
-    thread: PublicKey,
-    threadDataAccount: Thread | null
-}
+export const StartThread: FC = () => {
 
-export const StartThread: FC<Props> = ({ counterAddress, threadId, threadAuthority, thread, threadDataAccount }) => {
-
+    const { counterAddress, threadId, threadAuthority, thread, threadDataAccount } = useGameContext()
     const { publicKey } = useWallet()
     const { program, clockworkProvider } = useAnchorContext()
     const { showNotification } = useNotificationContext()

@@ -1,25 +1,21 @@
 'use client'
 
-import { Flex, Text } from "@chakra-ui/react"
 import { useEffect } from "react";
 import { useUnityFrameContext } from "../contexts/UnityFrameContext";
 
 export const GameView: React.FC = () => {
 
-    const { showUnityFrame: showGame, setShowUnityFrame: setShowGame } = useUnityFrameContext()
+    const { setShowUnityFrame } = useUnityFrameContext()
 
     useEffect(() => {
-        setShowGame(true)
+        setShowUnityFrame(true)
 
         return () => {
-            setShowGame(false)
+            setShowUnityFrame(false)
         }
     }, []);
 
     return (
-        // <Flex direction = "column" px={0} py={0} alignItems={"center"}>
-        //     <Text>GameView</Text>
-        // </Flex>
         <>
         </>
     )
