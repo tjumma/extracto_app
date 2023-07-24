@@ -6,6 +6,7 @@ import { useAnchorContext } from '../contexts/AnchorContext'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useNotificationContext } from '../contexts/NotificationContext'
 import { useGameContext } from '../contexts/GameContext'
+import { deleteThread } from '../functions/deleteThread'
 
 export const DeleteThread: FC = () => {
 
@@ -16,38 +17,11 @@ export const DeleteThread: FC = () => {
 
     const cantDeleteThread = (threadDataAccount === null || !threadId || !publicKey || !clockworkProvider || !threadAuthority || !thread)
 
-    const deleteThread = useCallback(async () => {
-
-        if (cantDeleteThread)
-            return
-
-        try {
-            await program.methods
-                .deleteThread()
-                .accounts({
-                    user: publicKey,
-                    clockworkProgram: clockworkProvider.threadProgram.programId,
-                    thread: thread,
-                    threadAuthority: threadAuthority
-                })
-                .rpc();
-
-            showNotification({
-                status: "success",
-                title: "Thread deleted!",
-                description: `Thread "${threadId}" has been deleted`,
-            })
-        }
-        catch (e) {
-            showNotification({
-                status: "error",
-                title: "Thread delete error!",
-                description: `${e}`,
-            })
-        }
+    const deleteThreadCallback = useCallback(async () => {
+        await deleteThread(publicKey, program, clockworkProvider, thread, threadId, threadAuthority, threadDataAccount, showNotification)
     }, [threadId, publicKey, clockworkProvider, threadAuthority, thread, threadDataAccount])
 
     return (
-        <Button onClick={deleteThread} isDisabled={cantDeleteThread} mb={5}>Delete thread</Button>
+        <Button onClick={deleteThreadCallback} isDisabled={cantDeleteThread} mb={5}>Delete thread</Button>
     )
 }

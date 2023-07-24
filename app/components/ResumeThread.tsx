@@ -6,6 +6,7 @@ import { useAnchorContext } from '../contexts/AnchorContext'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useNotificationContext } from '../contexts/NotificationContext'
 import { useGameContext } from '../contexts/GameContext'
+import { resumeThread } from '../functions/resumeThread'
 
 export const ResumeThread: FC = () => {
 
@@ -16,38 +17,11 @@ export const ResumeThread: FC = () => {
 
     const cantResumeThread = (threadDataAccount === null || !threadDataAccount.paused || !threadId || !publicKey || !clockworkProvider || !threadAuthority || !thread)
 
-    const resumeThread = useCallback(async () => {
-
-        if (cantResumeThread)
-            return
-
-        try {
-            await program.methods
-                .resumeThread()
-                .accounts({
-                    user: publicKey,
-                    clockworkProgram: clockworkProvider.threadProgram.programId,
-                    thread: thread,
-                    threadAuthority: threadAuthority,
-                })
-                .rpc();
-
-            showNotification({
-                status: "success",
-                title: "Thread resumed!",
-                description: `Thread "${threadId}" has been resumed`,
-            })
-        }
-        catch (e) {
-            showNotification({
-                status: "error",
-                title: "Thread resume error!",
-                description: `${e}`,
-            })
-        }
+    const resumeThreadCallback = useCallback(async () => {
+        await resumeThread(publicKey, program, clockworkProvider, thread, threadDataAccount, threadAuthority, threadId, showNotification)
     }, [threadId, publicKey, clockworkProvider, threadAuthority, thread, threadDataAccount])
 
     return (
-        <Button onClick={resumeThread} isDisabled={cantResumeThread} mb={5}>Resume thread</Button>
+        <Button onClick={resumeThreadCallback} isDisabled={cantResumeThread} mb={5}>Resume thread</Button>
     )
 }

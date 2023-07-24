@@ -1,12 +1,12 @@
 'use client'
 
 import { FC, useCallback, useState } from "react"
-import * as anchor from "@coral-xyz/anchor"
 import { Button } from "@chakra-ui/react";
 import { useNotificationContext } from "../contexts/NotificationContext";
 import { useAnchorContext } from "../contexts/AnchorContext";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useGameContext } from "../contexts/GameContext";
+import { initializeCounter } from "../functions/initializeCounter"
 
 export const InitializeCounter: FC = () => {
 
@@ -19,67 +19,7 @@ export const InitializeCounter: FC = () => {
     const [isLoading, setLoading] = useState(false)
 
     const initialize = useCallback(async () => {
-        console.log("Initialize counter");
-
-        if (!publicKey || !program || !counterAddress)
-            return;
-
-        if (counterDataAccount) {
-            console.log("Counter account is already initialized");
-
-            showNotification({
-                status: "info",
-                title: "Already initialized!",
-                description: `Counter account is already initialized`,
-                link: `https://solana.fm/address/${counterAddress}?cluster=http://localhost:8899`,
-                linkText: "Counter account"
-            })
-        }
-        else {
-            try {
-                setLoading(true)
-
-                const tx = await program.methods
-                    .initialize()
-                    .accounts({
-                        counter: counterAddress,
-                        user: publicKey,
-                        systemProgram: anchor.web3.SystemProgram.programId,
-                    })
-                    .transaction()
-
-                const txSig = await sendTransaction(tx, connection, {
-                    skipPreflight: true,
-                })
-
-                const latestBlockHash = await connection.getLatestBlockhash();
-
-                await connection.confirmTransaction({
-                    blockhash: latestBlockHash.blockhash,
-                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                    signature: txSig,
-                })
-
-                setLoading(false)
-
-                showNotification({
-                    status: "success",
-                    title: "Counter initialized!",
-                    description: `Counter account initialized`,
-                    link: `https://solana.fm/tx/${txSig}?cluster=http://localhost:8899`,
-                    linkText: "Transaction"
-                })
-            }
-            catch (e) {
-                setLoading(false)
-
-                showNotification({
-                    status: "error",
-                    title: "Initialize error!",
-                    description: `${e}`,
-                })
-            }
-        }
+        await initializeCounter(publicKey, program, counterAddress, counterDataAccount, showNotification, setLoading, sendTransaction, connection)
     }, [publicKey, counterAddress, counterDataAccount])
 
     return (
