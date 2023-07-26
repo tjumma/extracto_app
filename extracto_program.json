@@ -226,6 +226,12 @@
           "name": "user",
           "isMut": false,
           "isSigner": true
+        },
+        {
+          "name": "sessionToken",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": true
         }
       ],
       "args": []
@@ -263,6 +269,13 @@
           }
         ]
       }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "WrongAuthority",
+      "msg": "Wrong Authority"
     }
   ],
   "metadata": {

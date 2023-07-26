@@ -15,7 +15,7 @@ const GAME_COUNTER_THREAD_ID = "game_counter"
 
 export type CounterDataAccount = {
     authority: PublicKey,
-    count: number,
+    count: anchor.BN,
 }
 
 export interface GameContextState {

@@ -226,6 +226,12 @@ export type ExtractoProgram = {
           "name": "user",
           "isMut": false,
           "isSigner": true
+        },
+        {
+          "name": "sessionToken",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": true
         }
       ],
       "args": []
@@ -263,6 +269,13 @@ export type ExtractoProgram = {
           }
         ]
       }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "WrongAuthority",
+      "msg": "Wrong Authority"
     }
   ]
 };
@@ -495,6 +508,12 @@ export const IDL: ExtractoProgram = {
           "name": "user",
           "isMut": false,
           "isSigner": true
+        },
+        {
+          "name": "sessionToken",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": true
         }
       ],
       "args": []
@@ -532,6 +551,13 @@ export const IDL: ExtractoProgram = {
           }
         ]
       }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "WrongAuthority",
+      "msg": "Wrong Authority"
     }
   ]
 };

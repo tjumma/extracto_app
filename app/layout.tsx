@@ -11,6 +11,7 @@ import { Wallet } from './components/Wallet'
 import { AnchorContextProvider } from './contexts/AnchorContext'
 import { NotificationContextProvider } from './contexts/NotificationContext'
 import { GameContextProvider } from './contexts/GameContext'
+import SessionProvider from './contexts/SessionProvider'
 
 export default function RootLayout({
   children,
@@ -34,15 +35,17 @@ export default function RootLayout({
             <NotificationContextProvider>
               <Wallet>
                 <AnchorContextProvider>
-                  <GameContextProvider>
-                    <UnityFrameContextProvider>
-                      <Flex direction={"column"} height="100vh">
-                        <NavBar />
-                        {children}
-                        <UnityFrame />
-                      </Flex>
-                    </UnityFrameContextProvider>
-                  </GameContextProvider>
+                  <SessionProvider>
+                    <GameContextProvider>
+                      <UnityFrameContextProvider>
+                        <Flex direction={"column"} height="100vh">
+                          <NavBar />
+                          {children}
+                          <UnityFrame />
+                        </Flex>
+                      </UnityFrameContextProvider>
+                    </GameContextProvider>
+                  </SessionProvider>
                 </AnchorContextProvider>
               </Wallet>
             </NotificationContextProvider>

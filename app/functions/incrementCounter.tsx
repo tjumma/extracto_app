@@ -12,6 +12,7 @@ export const incrementCounter = async (publicKey, program, counterAddress, sendT
             .accounts({
                 counter: counterAddress,
                 user: publicKey,
+                sessionToken: null
             })
             .transaction()
 
@@ -33,7 +34,7 @@ export const incrementCounter = async (publicKey, program, counterAddress, sendT
             status: "success",
             title: "Counter incremented!",
             description: `Counter account incremented`,
-            link: `https://solana.fm/tx/${txSig}?cluster=http://localhost:8899`,
+            link: `https://solana.fm/tx/${txSig}?cluster=devnet`,
             linkText: "Transaction"
         })
     }

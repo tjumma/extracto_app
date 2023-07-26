@@ -1,7 +1,6 @@
 'use client'
 
 import { Flex, Text } from "@chakra-ui/react"
-import { PublicKey } from "@solana/web3.js";
 import { InitializeCounter } from "../components/InitializeCounter"
 import { IncrementCounter } from "../components/IncrementCounter"
 import { ResetCounter } from "../components/ResetCounter"
@@ -10,6 +9,9 @@ import { PauseThread } from "../components/PauseThread"
 import { ResumeThread } from "../components/ResumeThread"
 import { DeleteThread } from "../components/DeleteThread"
 import { useGameContext } from "../contexts/GameContext"
+import { CreateSession } from "../components/CreateSession";
+import { RevokeSession } from "../components/RevokeSession";
+import { IncrementViaSession } from "../components/IncrementViaSession";
 
 export const ClockworkView: React.FC = () => {
 
@@ -27,21 +29,21 @@ export const ClockworkView: React.FC = () => {
                 <Text mb={5}>{`thread paused: ${threadDataAccount ? threadDataAccount.paused : "null"}`}</Text>
                 <Text mb={5}>{`thread fee: ${threadDataAccount ? threadDataAccount.fee : "null"}`}</Text>
                 <Text mb={5}>{`thread name: ${threadDataAccount ? threadDataAccount.name : "null"}`}</Text>
-                <Text mb={5}>{`thread created at: ${threadDataAccount ? (new Date(threadDataAccount.createdAt.unixTimestamp * 1000)).toDateString() : "null"}`}</Text>
+                <Text mb={5}>{`thread created at: ${threadDataAccount ? (new Date(threadDataAccount.createdAt.unixTimestamp.toNumber() * 1000)).toDateString() : "null"}`}</Text>
                 <Text mb={5}>{`thread exec since reimb: ${threadDataAccount && threadDataAccount.execContext ? threadDataAccount.execContext.execsSinceReimbursement : "null"}`}</Text>
                 <Text mb={5}>{`thread last exec at: ${threadDataAccount && threadDataAccount.execContext ? threadDataAccount.execContext.lastExecAt : "null"}`}</Text>
             </Flex>
             <Flex direction="column" alignItems={"center"} width="50%">
                 <InitializeCounter />
+                <CreateSession />
+                <RevokeSession />
+                <IncrementViaSession />
                 <IncrementCounter />
                 <ResetCounter />
                 <StartThread />
                 <PauseThread />
                 <ResumeThread />
                 <DeleteThread />
-
-                {/* <Button onClick={fetchCounterAccount} mb={5}>Fetch counter account manually</Button>
-                <Button onClick={fetchThreadAccount} mb={5}>Fetch thread account manually</Button> */}
             </Flex>
         </Flex>
     )

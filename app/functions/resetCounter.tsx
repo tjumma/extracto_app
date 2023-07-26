@@ -33,7 +33,7 @@ export const resetCounter = async (publicKey, program, counterAddress, setLoadin
             status: "success",
             title: "Counter reset!",
             description: `Counter has been reset`,
-            link: `https://solana.fm/tx/${txSig}?cluster=http://localhost:8899`,
+            link: `https://solana.fm/tx/${txSig}?cluster=devnet`,
             linkText: "Transaction"
         })
     }

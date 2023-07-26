@@ -24,7 +24,7 @@ export const startThread = async(publicKey, clockworkProvider, threadDataAccount
                 status: "success",
                 title: "Thread started!",
                 description: `Thread has been started`,
-                link: `https://app.clockwork.xyz/threads/${thread}?cluster=custom&clusterUrl=http://localhost:8899`,
+                link: `https://app.clockwork.xyz/threads/${thread}?cluster=devnet`,
                 linkText: "Thread"
             })
         }

@@ -19,7 +19,7 @@ export const DeleteThread: FC = () => {
 
     const deleteThreadCallback = useCallback(async () => {
         await deleteThread(publicKey, program, clockworkProvider, thread, threadId, threadAuthority, threadDataAccount, showNotification)
-    }, [threadId, publicKey, clockworkProvider, threadAuthority, thread, threadDataAccount])
+    }, [threadId, publicKey, clockworkProvider, threadAuthority, thread, threadDataAccount, showNotification])
 
     return (
         <Button onClick={deleteThreadCallback} isDisabled={cantDeleteThread} mb={5}>Delete thread</Button>
