@@ -24,7 +24,7 @@ export const UnityFrame: React.FC = () => {
 
     const { showUnityFrame } = useUnityFrameContext()
     const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
-    const { incrementCounterCallback } = useGameContext()
+    const { playerDataAccount, incrementCounterCallback, initPlayerCallback } = useGameContext()
 
     useEffect(
         function () {
@@ -67,12 +67,24 @@ export const UnityFrame: React.FC = () => {
         sendMessage("ReactToUnity", "OnWalletConnected", message);
     }
 
-    // const handleIncrementCounterFromUnity = useCallback((message) => {
-    //     console.log(`React got IncrementCounterFromUnity: ${message}`);
-    //     return null
-    // }, []);
+    useEffect(() => {
+        console.log(`JSON: ${JSON.stringify(playerDataAccount)}`)
+        sendMessage("ReactToUnity", "OnPlayerDataUpdated", JSON.stringify(playerDataAccount));
+    }, [playerDataAccount])
 
-    function handleIncrementCounterFromUnity(message: ReactUnityEventParameter) {
+
+
+
+
+
+
+
+
+
+
+
+
+    function handleIncrementCounterFromUnity(message: string) {
         console.log(`React got IncrementCounterFromUnity: ${message}`);
         incrementCounterCallback();
         return null;
@@ -84,6 +96,19 @@ export const UnityFrame: React.FC = () => {
             removeEventListener("IncrementCounterFromUnity", handleIncrementCounterFromUnity);
         };
     }, [addEventListener, removeEventListener, handleIncrementCounterFromUnity]);
+
+    function handleInitPlayerFromUnity(playerName: string) {
+        console.log(`React got InitPlayerFromUnity: ${playerName}`);
+        initPlayerCallback(playerName)
+        return null;
+    };
+
+    useEffect(() => {
+        addEventListener("InitPlayerFromUnity", handleInitPlayerFromUnity);
+        return () => {
+            removeEventListener("IncrementCounterFromUnity", handleInitPlayerFromUnity);
+        };
+    }, [addEventListener, removeEventListener, handleInitPlayerFromUnity]);
 
     return (
         <>

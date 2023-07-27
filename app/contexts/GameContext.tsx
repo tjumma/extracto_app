@@ -8,6 +8,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { incrementCounter } from "../functions/incrementCounter";
 import { useNotificationContext } from "./NotificationContext";
+import { initializePlayer } from "../functions/initializePlayer";
 
 const PLAYER_SEED = "player";
 const COUNTER_SEED = "counter";
@@ -34,7 +35,8 @@ export interface GameContextState {
     threadAuthority: PublicKey,
     thread: PublicKey,
     threadDataAccount: Thread | null,
-    incrementCounterCallback: () => Promise<void>
+    incrementCounterCallback: () => Promise<void>,
+    initPlayerCallback: (playerName: string) => Promise<void>
 }
 
 export const GameContext = createContext<GameContextState>({} as GameContextState);
@@ -223,6 +225,10 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         await incrementCounter(publicKey, program, counterAddress, sendTransaction, connection, showNotification)
     }, [publicKey, counterAddress])
 
+    const initPlayerFromUnity = useCallback(async (playerName: string) => {
+        await initializePlayer(playerName, publicKey, program, connection, playerDataAddress, playerDataAccount, showNotification, sendTransaction)
+    }, [publicKey, playerDataAddress, playerDataAccount])
+
     return (
         <GameContext.Provider value={{
             playerDataAddress,
@@ -233,7 +239,8 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
             threadAuthority,
             thread,
             threadDataAccount,
-            incrementCounterCallback: incrementCounterFromUnity
+            incrementCounterCallback: incrementCounterFromUnity,
+            initPlayerCallback: initPlayerFromUnity
         }}>
             {children}
         </GameContext.Provider>

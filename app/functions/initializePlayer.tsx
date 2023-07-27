@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor"
 
-export const initializePlayer = async (name, publicKey, program, playerDataAddress, playerDataAccount, showNotification, setLoading, sendTransaction, connection) => {
+export const initializePlayer = async (name, publicKey, program, connection, playerDataAddress, playerDataAccount, showNotification, sendTransaction, setLoading?) => {
     console.log("Initialize PlayerData");
 
     const cantInitializePlayer = ( !publicKey || !program || !playerDataAddress || playerDataAccount !== null)
@@ -9,7 +9,7 @@ export const initializePlayer = async (name, publicKey, program, playerDataAddre
         return;
 
     try {
-        setLoading(true)
+        if (setLoading) setLoading(true)
 
         const tx = await program.methods
             .initPlayer(name)
@@ -32,7 +32,7 @@ export const initializePlayer = async (name, publicKey, program, playerDataAddre
             signature: txSig,
         })
 
-        setLoading(false)
+        if (setLoading) setLoading(false)
 
         showNotification({
             status: "success",
@@ -43,7 +43,7 @@ export const initializePlayer = async (name, publicKey, program, playerDataAddre
         })
     }
     catch (e) {
-        setLoading(false)
+        if (setLoading) setLoading(false)
 
         showNotification({
             status: "error",

@@ -23,14 +23,14 @@ export const InitializePlayer: FC = () => {
 
     const cantInitializePlayer = (!publicKey || !program || !playerDataAddress || playerDataAccount !== null)
 
-    const initializePlayerCallback = useCallback(async () => {
-        await initializePlayer(name, publicKey, program, playerDataAddress, playerDataAccount, showNotification, setLoading, sendTransaction, connection)
-    }, [name, publicKey, playerDataAddress, playerDataAccount])
+    const initializePlayerCallback = useCallback(async (playerName: string) => {
+        await initializePlayer(playerName, publicKey, program, connection, playerDataAddress, playerDataAccount, showNotification, sendTransaction, setLoading)
+    }, [publicKey, playerDataAddress, playerDataAccount])
 
     return (
         <>
             <Input width={"60%"} mb={5} value={name} onChange={handleNameChange} display={!cantInitializePlayer ? "flex" : "none"} placeholder="player name here"/>
-            <Button isLoading={isLoading} onClick={initializePlayerCallback} isDisabled={cantInitializePlayer} mb={5}>Initialize player</Button>
+            <Button isLoading={isLoading} onClick={() => initializePlayerCallback(name)} isDisabled={cantInitializePlayer} mb={5}>Initialize player</Button>
         </>
     )
 }
