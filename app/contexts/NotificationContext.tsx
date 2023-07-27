@@ -32,7 +32,7 @@ export const NotificationContextProvider: FC<{ children: ReactNode }> = ({ child
             duration: 3000,
             isClosable: true,
             render: () => (
-                <Alert status={notificationOptions.status} rounded={"lg"} py={"20px"} px={"30px"}>
+                <Alert status={notificationOptions.status} variant={'solid'} rounded={"lg"} py={"20px"} px={"30px"}>
                     <AlertIcon boxSize='20px' />
                     <Box flexDirection={"column"}>
                         <AlertTitle>{notificationOptions.title}</AlertTitle>
