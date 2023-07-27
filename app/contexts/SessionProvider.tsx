@@ -10,7 +10,7 @@ interface SessionProviderProps {
 const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet() as AnchorWallet;
-  const cluster = "devnet";
+  const cluster = "localnet";
   const sessionWallet = useSessionKeyManager(anchorWallet, connection, cluster);
 
   return (

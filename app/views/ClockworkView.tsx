@@ -12,14 +12,17 @@ import { useGameContext } from "../contexts/GameContext"
 import { CreateSession } from "../components/CreateSession";
 import { RevokeSession } from "../components/RevokeSession";
 import { IncrementViaSession } from "../components/IncrementViaSession";
+import { InitializePlayer } from "../components/InitializePlayer"
 
 export const ClockworkView: React.FC = () => {
 
-    const { counterAddress, counterDataAccount, threadId, threadAuthority, thread, threadDataAccount } = useGameContext()
+    const { playerDataAddress, playerDataAccount, counterAddress, counterDataAccount, threadId, threadAuthority, thread, threadDataAccount } = useGameContext()
 
     return (
         <Flex direction={"row"} px={0} pb={20} pt={10}>
             <Flex direction="column" alignItems={"center"} textAlign={"center"} width="50%">
+                <Text mb={5}>{`PlayerData address: ${playerDataAddress}`}</Text>
+                <Text mb={5}>{`Player name: ${playerDataAccount ? playerDataAccount.name : "null"}`}</Text>
                 <Text mb={5}>{`Counter address: ${counterAddress}`}</Text>
                 <Text mb={5}>{`Counter: ${counterDataAccount ? counterDataAccount.count : "null"}`}</Text>
                 <Text mb={5}>{`Current thread id: ${counterDataAccount ? threadId : null}`}</Text>
@@ -34,6 +37,7 @@ export const ClockworkView: React.FC = () => {
                 <Text mb={5}>{`thread last exec at: ${threadDataAccount && threadDataAccount.execContext ? threadDataAccount.execContext.lastExecAt : "null"}`}</Text>
             </Flex>
             <Flex direction="column" alignItems={"center"} width="50%">
+                <InitializePlayer />
                 <InitializeCounter />
                 <CreateSession />
                 <RevokeSession />

@@ -34,7 +34,7 @@ export const createSession = async (publicKey, program, sessionWallet, showNotif
         showNotification({
             status: "success",
             title: "Session created!",
-            description: `Session ${sessionInfo.sessionToken} was created`,
+            description: `Gum session has been created`,
         })
     }
 }

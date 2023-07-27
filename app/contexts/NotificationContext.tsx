@@ -28,24 +28,27 @@ export const NotificationContextProvider: FC<{ children: ReactNode }> = ({ child
 
     const addToast = useCallback((notificationOptions: NotificationOptions) => {
         toast({
+            status: notificationOptions.status,
+            title: notificationOptions.title,
+            description: notificationOptions.description,
             position: 'bottom-left',
             duration: 3000,
             isClosable: true,
-            render: () => (
-                <Alert status={notificationOptions.status} variant={'solid'} rounded={"lg"} py={"20px"} px={"30px"}>
-                    <AlertIcon boxSize='20px' />
-                    <Box flexDirection={"column"}>
-                        <AlertTitle>{notificationOptions.title}</AlertTitle>
-                        <AlertDescription>{notificationOptions.description}</AlertDescription>
-                        {notificationOptions.link !== undefined && notificationOptions.linkText !== undefined &&
-                            <Box textAlign={"right"}>
-                                <Link href={notificationOptions.link} isExternal>
-                                    <ExternalLinkIcon/> {notificationOptions.linkText}
-                                </Link>
-                            </Box>}
-                    </Box>
-                </Alert>
-            )
+            // render: () => (
+            //     <Alert status={notificationOptions.status} variant={'solid'} rounded={"lg"} py={"20px"} px={"30px"}>
+            //         <AlertIcon boxSize='20px' />
+            //         <Box flexDirection={"column"}>
+            //             <AlertTitle>{notificationOptions.title}</AlertTitle>
+            //             <AlertDescription>{notificationOptions.description}</AlertDescription>
+            //             {notificationOptions.link !== undefined && notificationOptions.linkText !== undefined &&
+            //                 <Box textAlign={"right"}>
+            //                     <Link href={notificationOptions.link} isExternal>
+            //                         <ExternalLinkIcon/> {notificationOptions.linkText}
+            //                     </Link>
+            //                 </Box>}
+            //         </Box>
+            //     </Alert>
+            // )
         })
     }, [toast])
 

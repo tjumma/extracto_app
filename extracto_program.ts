@@ -3,6 +3,32 @@ export type ExtractoProgram = {
   "name": "extracto_program",
   "instructions": [
     {
+      "name": "initPlayer",
+      "accounts": [
+        {
+          "name": "playerData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "initialize",
       "accounts": [
         {
@@ -269,6 +295,26 @@ export type ExtractoProgram = {
           }
         ]
       }
+    },
+    {
+      "name": "playerData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "runsFinished",
+            "type": "u32"
+          }
+        ]
+      }
     }
   ],
   "errors": [
@@ -284,6 +330,32 @@ export const IDL: ExtractoProgram = {
   "version": "0.1.0",
   "name": "extracto_program",
   "instructions": [
+    {
+      "name": "initPlayer",
+      "accounts": [
+        {
+          "name": "playerData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ]
+    },
     {
       "name": "initialize",
       "accounts": [
@@ -548,6 +620,26 @@ export const IDL: ExtractoProgram = {
           {
             "name": "count",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "playerData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "runsFinished",
+            "type": "u32"
           }
         ]
       }

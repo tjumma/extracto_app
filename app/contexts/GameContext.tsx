@@ -9,9 +9,16 @@ import { PublicKey } from "@solana/web3.js";
 import { incrementCounter } from "../functions/incrementCounter";
 import { useNotificationContext } from "./NotificationContext";
 
+const PLAYER_SEED = "player";
 const COUNTER_SEED = "counter";
 const THREAD_AUTHORITY_SEED = "thread_authority"
 const GAME_COUNTER_THREAD_ID = "game_counter"
+
+export type PlayerDataAccount = {
+    authority: PublicKey,
+    name: string,
+    runsFinished: number,
+}
 
 export type CounterDataAccount = {
     authority: PublicKey,
@@ -19,6 +26,8 @@ export type CounterDataAccount = {
 }
 
 export interface GameContextState {
+    playerDataAddress: anchor.web3.PublicKey,
+    playerDataAccount: PlayerDataAccount | null,
     counterAddress: anchor.web3.PublicKey,
     counterDataAccount: CounterDataAccount | null,
     threadId: string,
@@ -41,8 +50,44 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     const { publicKey, sendTransaction } = useWallet()
     const { showNotification } = useNotificationContext()
 
+    const [playerDataAccount, setPlayerDataAccount] = useState<PlayerDataAccount | null>(null)
     const [counterDataAccount, setCounterDataAccount] = useState<CounterDataAccount | null>(null)
     const [threadDataAccount, setThreadDataAccount] = useState<Thread | null>(null)
+
+    const playerDataAddress = useMemo(() => {
+        if (publicKey && program) {
+            const [newPlayerDataAddress, _bump] = PublicKey.findProgramAddressSync(
+                [anchor.utils.bytes.utf8.encode(PLAYER_SEED), program.provider.publicKey.toBuffer()],
+                program.programId
+            );
+
+            return newPlayerDataAddress;
+        }
+        else {
+            return null;
+        }
+    }, [publicKey, program])
+
+    useEffect(() => {
+        fetchPlayerDataAccount();
+    }, [playerDataAddress])
+
+    const fetchPlayerDataAccount = async () => {
+        console.log("Fetching PlayerData account...")
+        if (playerDataAddress) {
+            try {
+                const newPlayerDataAccount = await program.account.playerData.fetch(playerDataAddress)
+                setPlayerDataAccount(newPlayerDataAccount)
+            } catch (error) {
+                console.log(`Error fetching PlayerData account: ${error}`)
+                setPlayerDataAccount(null)
+            }
+        }
+        else {
+            console.log("no PlayerData address yet")
+            setPlayerDataAccount(null)
+        }
+    };
 
     const counterAddress = useMemo(() => {
         if (publicKey && program) {
@@ -78,6 +123,26 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
             setCounterDataAccount(null)
         }
     };
+
+    useEffect(() => {
+        if (!playerDataAddress) return
+
+        const subscriptionId = connection.onAccountChange(
+            playerDataAddress,
+            (playerDataAccountInfo) => {
+                const decodedAccount = program.coder.accounts.decode(
+                    "playerData",
+                    playerDataAccountInfo.data
+                )
+                console.log("Got new PlayerData via socket")
+                setPlayerDataAccount(decodedAccount)
+            }
+        )
+
+        return () => {
+            connection.removeAccountChangeListener(subscriptionId)
+        }
+    }, [connection, playerDataAddress, program, publicKey])
 
     const threadId = GAME_COUNTER_THREAD_ID;
 
@@ -154,19 +219,21 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         }
     }, [connection, thread, program, publicKey])
 
-    const incrementCounterCallback = useCallback(async () => {
+    const incrementCounterFromUnity = useCallback(async () => {
         await incrementCounter(publicKey, program, counterAddress, sendTransaction, connection, showNotification)
     }, [publicKey, counterAddress])
 
     return (
         <GameContext.Provider value={{
+            playerDataAddress,
+            playerDataAccount,
             counterAddress,
             counterDataAccount,
             threadId,
             threadAuthority,
             thread,
             threadDataAccount,
-            incrementCounterCallback
+            incrementCounterCallback: incrementCounterFromUnity
         }}>
             {children}
         </GameContext.Provider>

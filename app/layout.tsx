@@ -27,8 +27,8 @@ export default function RootLayout({
   const theme = extendTheme({ config })
 
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" suppressHydrationWarning={true}>
+      <body suppressHydrationWarning={true}>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <CacheProvider>
           <ChakraProvider theme={theme}>
