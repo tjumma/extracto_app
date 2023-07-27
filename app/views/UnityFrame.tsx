@@ -63,6 +63,9 @@ export const UnityFrame: React.FC = () => {
         requestFullscreen(isFullScreen);
     }
 
+
+    //REACT TO UNITY
+
     function handleSendMessageToUnity(message: string) {
         sendMessage("ReactToUnity", "OnWalletConnected", message);
     }
@@ -83,6 +86,20 @@ export const UnityFrame: React.FC = () => {
 
 
 
+    //UNITY TO REACT
+
+    function handleGameReady() {
+        console.log(`React got GameReady from Unity`);
+        sendMessage("ReactToUnity", "OnPlayerDataUpdated", JSON.stringify(playerDataAccount));
+        return null;
+    };
+
+    useEffect(() => {
+        addEventListener("GameReady", handleGameReady);
+        return () => {
+            removeEventListener("GameReady", handleGameReady);
+        };
+    }, [addEventListener, removeEventListener, handleIncrementCounterFromUnity]);
 
     function handleIncrementCounterFromUnity(message: string) {
         console.log(`React got IncrementCounterFromUnity: ${message}`);
