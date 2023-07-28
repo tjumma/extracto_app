@@ -24,7 +24,7 @@ export const ClockworkView: React.FC = () => {
                 <Text mb={5}>{`PlayerData address: ${playerDataAddress}`}</Text>
                 <Text mb={5}>{`Player name: ${playerDataAccount ? playerDataAccount.name : "null"}`}</Text>
                 <Text mb={5}>{`Run address: ${runDataAddress}`}</Text>
-                <Text mb={5}>{`Run: ${runDataAccount ? runDataAccount.count : "null"}`}</Text>
+                <Text mb={5}>{`Run: ${runDataAccount ? runDataAccount.score : "null"}`}</Text>
                 <Text mb={5}>{`Current thread id: ${runDataAccount ? threadId : null}`}</Text>
                 <Text mb={5}>{`Current thread authority address: ${runDataAccount ? threadAuthority : null}`}</Text>
                 <Text mb={5}>{`Current thread address: ${thread}`}</Text>

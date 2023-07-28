@@ -290,7 +290,7 @@ export type ExtractoProgram = {
             "type": "publicKey"
           },
           {
-            "name": "count",
+            "name": "score",
             "type": "u64"
           }
         ]
@@ -618,7 +618,7 @@ export const IDL: ExtractoProgram = {
             "type": "publicKey"
           },
           {
-            "name": "count",
+            "name": "score",
             "type": "u64"
           }
         ]

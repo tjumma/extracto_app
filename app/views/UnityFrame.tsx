@@ -75,13 +75,6 @@ export const UnityFrame: React.FC = () => {
     //REACT TO UNITY
 
     useEffect(() => {
-
-        if (playerDataAccount === undefined)
-        {
-            console.log("UNDEFINED HERE, SKIPPING SENDING TO UNITY")
-            return
-        }
-
         const playerData: PlayerData = {
             publicKey: publicKey ? publicKey.toString() : "",
             name: playerDataAccount ? playerDataAccount.name : "",

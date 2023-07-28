@@ -23,7 +23,7 @@ export type PlayerDataAccount = {
 
 export type RunDataAccount = {
     authority: PublicKey,
-    count: anchor.BN,
+    score: anchor.BN,
 }
 
 export interface GameContextState {
@@ -54,13 +54,6 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     const { showNotification } = useNotificationContext()
 
     const [playerDataAccount, setPlayerDataAccount] = useState<PlayerDataAccount | null | undefined>()
-    if (playerDataAccount === undefined)
-        {
-            console.log("UNDEFINED in context, SKIPPING SENDING TO UNITY")
-        }
-        else {
-            console.log("not UNDEFINED even here")
-        }
     const [runDataAccount, setRunDataAccount] = useState<RunDataAccount | null>(null)
     const [threadDataAccount, setThreadDataAccount] = useState<Thread | null>(null)
 
@@ -200,7 +193,7 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
                     "runData",
                     runAccountInfo.data
                 )
-                console.log("Got new run via socket:", decodedAccount.count.toString())
+                console.log("Got new run score via socket:", decodedAccount.score.toString())
                 setRunDataAccount(decodedAccount)
             }
         )

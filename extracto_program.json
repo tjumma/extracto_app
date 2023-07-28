@@ -290,7 +290,7 @@
             "type": "publicKey"
           },
           {
-            "name": "count",
+            "name": "score",
             "type": "u64"
           }
         ]
