@@ -27,8 +27,9 @@ export type CounterDataAccount = {
 }
 
 export interface GameContextState {
+    publicKey: PublicKey,
     playerDataAddress: anchor.web3.PublicKey,
-    playerDataAccount: PlayerDataAccount | null,
+    playerDataAccount: PlayerDataAccount | null | undefined,
     counterAddress: anchor.web3.PublicKey,
     counterDataAccount: CounterDataAccount | null,
     threadId: string,
@@ -52,7 +53,14 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     const { publicKey, sendTransaction } = useWallet()
     const { showNotification } = useNotificationContext()
 
-    const [playerDataAccount, setPlayerDataAccount] = useState<PlayerDataAccount | null>(null)
+    const [playerDataAccount, setPlayerDataAccount] = useState<PlayerDataAccount | null | undefined>()
+    if (playerDataAccount === undefined)
+        {
+            console.log("UNDEFINED in context, SKIPPING SENDING TO UNITY")
+        }
+        else {
+            console.log("not UNDEFINED even here")
+        }
     const [counterDataAccount, setCounterDataAccount] = useState<CounterDataAccount | null>(null)
     const [threadDataAccount, setThreadDataAccount] = useState<Thread | null>(null)
 
@@ -84,10 +92,6 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
                 console.log(`Error fetching PlayerData account: ${error}`)
                 setPlayerDataAccount(null)
             }
-        }
-        else {
-            console.log("no PlayerData address yet")
-            setPlayerDataAccount(null)
         }
     };
 
@@ -231,6 +235,7 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
 
     return (
         <GameContext.Provider value={{
+            publicKey,
             playerDataAddress,
             playerDataAccount,
             counterAddress,

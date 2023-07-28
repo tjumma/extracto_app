@@ -6,6 +6,7 @@ import { useUnityFrameContext } from "../contexts/UnityFrameContext";
 import { useCallback, useEffect, useState } from "react";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
 import { useGameContext } from "../contexts/GameContext";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 const isBrowser = () => typeof window !== 'undefined';
 
@@ -20,11 +21,18 @@ function getWindowPixelRatio() {
     }
 }
 
+export type PlayerData = {
+    publicKey: string,
+    name: string,
+    runsFinished: number,
+}
+
 export const UnityFrame: React.FC = () => {
 
+    const { publicKey } = useWallet()
     const { showUnityFrame } = useUnityFrameContext()
     const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
-    const { playerDataAccount, incrementCounterCallback, initPlayerCallback } = useGameContext()
+    const { playerDataAddress, playerDataAccount, incrementCounterCallback, initPlayerCallback } = useGameContext()
 
     useEffect(
         function () {
@@ -66,17 +74,23 @@ export const UnityFrame: React.FC = () => {
 
     //REACT TO UNITY
 
-    function handleSendMessageToUnity(message: string) {
-        sendMessage("ReactToUnity", "OnWalletConnected", message);
-    }
-
     useEffect(() => {
-        console.log(`JSON: ${JSON.stringify(playerDataAccount)}`)
-        sendMessage("ReactToUnity", "OnPlayerDataUpdated", JSON.stringify(playerDataAccount));
-    }, [playerDataAccount])
 
+        if (playerDataAccount === undefined)
+        {
+            console.log("UNDEFINED HERE, SKIPPING SENDING TO UNITY")
+            return
+        }
 
-
+        const playerData: PlayerData = {
+            publicKey: publicKey ? publicKey.toString() : "",
+            name: playerDataAccount ? playerDataAccount.name : "",
+            runsFinished: playerDataAccount ? playerDataAccount.runsFinished : 0
+        }
+        console.log("sending PlayerData to Unity")
+        console.log(JSON.stringify(playerData))
+        sendMessage("ReactToUnity", "OnPlayerUpdated", JSON.stringify(playerData));
+    }, [publicKey, playerDataAddress, playerDataAccount])
 
 
 
@@ -90,7 +104,14 @@ export const UnityFrame: React.FC = () => {
 
     function handleGameReady() {
         console.log(`React got GameReady from Unity`);
-        sendMessage("ReactToUnity", "OnPlayerDataUpdated", JSON.stringify(playerDataAccount));
+        const playerData: PlayerData = {
+            publicKey: publicKey ? publicKey.toString() : "",
+            name: playerDataAccount ? playerDataAccount.name : "",
+            runsFinished: playerDataAccount ? playerDataAccount.runsFinished : 0
+        }
+        console.log("sending PlayerData to Unity")
+        console.log(JSON.stringify(playerData))
+        sendMessage("ReactToUnity", "OnPlayerUpdated", JSON.stringify(playerData));
         return null;
     };
 
@@ -141,7 +162,6 @@ export const UnityFrame: React.FC = () => {
                         devicePixelRatio={pixelRatio}
                     />
                     {isLoaded && <button style={{ right: "20px", top: "20px", position: "absolute" }} className="fullscreen-button" onClick={() => handleClickFullscreen(true)}>Go fullscreen</button>}
-                    {isLoaded && <button style={{ right: "20px", bottom: "20px", position: "absolute" }} className="fullscreen-button" onClick={() => handleSendMessageToUnity("some publicKey")}>Send message to Unity</button>}
                     {!isLoaded && <Progress style={{ left: "0px", bottom: "0px", position: "absolute", width: "100%" }} hasStripe value={loadingProgression * 100} size={'sm'} />}
                 </Box>
             </Flex>

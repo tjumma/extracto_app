@@ -16,7 +16,7 @@ export const resetCounter = async (publicKey, program, counterAddress, setLoadin
             .transaction()
 
         const txSig = await sendTransaction(tx, connection, {
-            skipPreflight: true,
+            // skipPreflight: true,
         })
 
         const latestBlockHash = await connection.getLatestBlockhash();

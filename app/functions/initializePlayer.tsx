@@ -21,7 +21,7 @@ export const initializePlayer = async (name, publicKey, program, connection, pla
             .transaction()
 
         const txSig = await sendTransaction(tx, connection, {
-            skipPreflight: true,
+            // skipPreflight: true,
         })
 
         const latestBlockHash = await connection.getLatestBlockhash();

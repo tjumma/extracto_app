@@ -21,7 +21,7 @@ export const initializeCounter = async (publicKey, program, counterAddress, coun
             .transaction()
 
         const txSig = await sendTransaction(tx, connection, {
-            skipPreflight: true,
+            // skipPreflight: true,
         })
 
         const latestBlockHash = await connection.getLatestBlockhash();

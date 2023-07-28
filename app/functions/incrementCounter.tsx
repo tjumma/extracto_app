@@ -17,7 +17,7 @@ export const incrementCounter = async (publicKey, program, counterAddress, sendT
             .transaction()
 
         const txSig = await sendTransaction(tx, connection, {
-            skipPreflight: true,
+            // skipPreflight: true,
         })
 
         const latestBlockHash = await connection.getLatestBlockhash();
