@@ -13,7 +13,7 @@ export const IncrementViaSession: FC = () => {
 
     const { publicKey } = useWallet()
     const { program } = useAnchorContext()
-    const { counterAddress } = useGameContext()
+    const { runDataAddress: runAddress } = useGameContext()
     const { showNotification } = useNotificationContext()
 
     const [isLoading, setLoading] = useState(false)
@@ -22,7 +22,7 @@ export const IncrementViaSession: FC = () => {
     const cantIncrementViaSession = (!publicKey || !program || !sessionWallet || !showNotification || sessionWallet.publicKey == null)
 
     const incrementViaSessionCallback = useCallback(async () => {
-        await incrementViaSession(publicKey, program, counterAddress, sessionWallet, showNotification, setLoading)
+        await incrementViaSession(publicKey, program, runAddress, sessionWallet, showNotification, setLoading)
     }, [publicKey, program, sessionWallet, showNotification])
 
     return (

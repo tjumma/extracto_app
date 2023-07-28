@@ -1,8 +1,8 @@
 import { SystemProgram } from "@solana/web3.js";
 
-export const startThread = async(publicKey, clockworkProvider, threadDataAccount, threadId, threadAuthority, thread, counterAddress, program, showNotification) => {
+export const startThread = async(publicKey, clockworkProvider, threadDataAccount, threadId, threadAuthority, thread, runAddress, program, showNotification) => {
 
-    const cantStartNewThread = (threadDataAccount != null || !threadId || !publicKey || !clockworkProvider || !threadAuthority || !thread || !counterAddress)
+    const cantStartNewThread = (threadDataAccount != null || !threadId || !publicKey || !clockworkProvider || !threadAuthority || !thread || !runAddress)
 
     if (cantStartNewThread)
             return
@@ -16,7 +16,7 @@ export const startThread = async(publicKey, clockworkProvider, threadDataAccount
                     clockworkProgram: clockworkProvider.threadProgram.programId,
                     thread: thread,
                     threadAuthority: threadAuthority,
-                    counter: counterAddress,
+                    run: runAddress,
                 })
                 .rpc();
 

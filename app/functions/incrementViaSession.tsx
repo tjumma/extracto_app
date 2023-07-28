@@ -1,4 +1,4 @@
-export const incrementViaSession = async (publicKey, program, counterAddress, sessionWallet, showNotification, setLoading?) => {
+export const incrementViaSession = async (publicKey, program, runAddress, sessionWallet, showNotification, setLoading?) => {
 
     const cantIncrementViaSession = (!publicKey || !program || !sessionWallet || !showNotification || sessionWallet.publicKey == null)
 
@@ -11,7 +11,7 @@ export const incrementViaSession = async (publicKey, program, counterAddress, se
         const tx = await program.methods
             .increment()
             .accounts({
-                counter: counterAddress,
+                run: runAddress,
                 user: sessionWallet.publicKey!,
                 sessionToken: sessionWallet.sessionToken
             })

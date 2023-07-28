@@ -10,16 +10,16 @@ import { startThread } from '../functions/startThread'
 
 export const StartThread: FC = () => {
 
-    const { counterAddress, threadId, threadAuthority, thread, threadDataAccount } = useGameContext()
+    const { runDataAddress: runAddress, threadId, threadAuthority, thread, threadDataAccount } = useGameContext()
     const { publicKey } = useWallet()
     const { program, clockworkProvider } = useAnchorContext()
     const { showNotification } = useNotificationContext()
 
-    const cantStartNewThread = (threadDataAccount != null || !threadId || !publicKey || !clockworkProvider || !threadAuthority || !thread || !counterAddress)
+    const cantStartNewThread = (threadDataAccount != null || !threadId || !publicKey || !clockworkProvider || !threadAuthority || !thread || !runAddress)
 
     const startThreadCallback = useCallback(async () => {
-        await startThread(publicKey, clockworkProvider, threadDataAccount, threadId, threadAuthority, thread, counterAddress, program, showNotification)
-    }, [threadId, publicKey, clockworkProvider, threadAuthority, thread, counterAddress])
+        await startThread(publicKey, clockworkProvider, threadDataAccount, threadId, threadAuthority, thread, runAddress, program, showNotification)
+    }, [threadId, publicKey, clockworkProvider, threadAuthority, thread, runAddress])
 
     return (
         <Button onClick={startThreadCallback} isDisabled={cantStartNewThread} mb={5}>Start thread</Button>

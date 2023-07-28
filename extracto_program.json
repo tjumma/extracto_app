@@ -29,10 +29,10 @@
       ]
     },
     {
-      "name": "initialize",
+      "name": "startNewRun",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -53,7 +53,7 @@
       "name": "startThread",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -215,7 +215,7 @@
       "name": "incrementViaThread",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -244,7 +244,7 @@
       "name": "increment",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -266,7 +266,7 @@
       "name": "reset",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -281,7 +281,7 @@
   ],
   "accounts": [
     {
-      "name": "Counter",
+      "name": "RunData",
       "type": {
         "kind": "struct",
         "fields": [

@@ -1,9 +1,9 @@
 'use client'
 
 import { Flex, Text } from "@chakra-ui/react"
-import { InitializeCounter } from "../components/InitializeCounter"
-import { IncrementCounter } from "../components/IncrementCounter"
-import { ResetCounter } from "../components/ResetCounter"
+import { InitializeRun } from "../components/InitializeRun"
+import { IncrementRun } from "../components/IncrementRun"
+import { ResetRun } from "../components/ResetRun"
 import { StartThread } from "../components/StartThread"
 import { PauseThread } from "../components/PauseThread"
 import { ResumeThread } from "../components/ResumeThread"
@@ -16,17 +16,17 @@ import { InitializePlayer } from "../components/InitializePlayer"
 
 export const ClockworkView: React.FC = () => {
 
-    const { playerDataAddress, playerDataAccount, counterAddress, counterDataAccount, threadId, threadAuthority, thread, threadDataAccount } = useGameContext()
+    const { playerDataAddress, playerDataAccount, runDataAddress, runDataAccount, threadId, threadAuthority, thread, threadDataAccount } = useGameContext()
 
     return (
         <Flex direction={"row"} px={0} pb={20} pt={10}>
             <Flex direction="column" alignItems={"center"} textAlign={"center"} width="50%">
                 <Text mb={5}>{`PlayerData address: ${playerDataAddress}`}</Text>
                 <Text mb={5}>{`Player name: ${playerDataAccount ? playerDataAccount.name : "null"}`}</Text>
-                <Text mb={5}>{`Counter address: ${counterAddress}`}</Text>
-                <Text mb={5}>{`Counter: ${counterDataAccount ? counterDataAccount.count : "null"}`}</Text>
-                <Text mb={5}>{`Current thread id: ${counterDataAccount ? threadId : null}`}</Text>
-                <Text mb={5}>{`Current thread authority address: ${counterDataAccount ? threadAuthority : null}`}</Text>
+                <Text mb={5}>{`Run address: ${runDataAddress}`}</Text>
+                <Text mb={5}>{`Run: ${runDataAccount ? runDataAccount.count : "null"}`}</Text>
+                <Text mb={5}>{`Current thread id: ${runDataAccount ? threadId : null}`}</Text>
+                <Text mb={5}>{`Current thread authority address: ${runDataAccount ? threadAuthority : null}`}</Text>
                 <Text mb={5}>{`Current thread address: ${thread}`}</Text>
                 <Text mb={5}>{`thread id: ${threadDataAccount ? threadDataAccount.id : "null"}`}</Text>
                 <Text mb={5}>{`thread paused: ${threadDataAccount ? threadDataAccount.paused : "null"}`}</Text>
@@ -38,12 +38,12 @@ export const ClockworkView: React.FC = () => {
             </Flex>
             <Flex direction="column" alignItems={"center"} width="50%">
                 <InitializePlayer />
-                <InitializeCounter />
+                <InitializeRun />
                 <CreateSession />
                 <RevokeSession />
                 <IncrementViaSession />
-                <IncrementCounter />
-                <ResetCounter />
+                <IncrementRun />
+                <ResetRun />
                 <StartThread />
                 <PauseThread />
                 <ResumeThread />

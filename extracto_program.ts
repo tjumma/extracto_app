@@ -29,10 +29,10 @@ export type ExtractoProgram = {
       ]
     },
     {
-      "name": "initialize",
+      "name": "startNewRun",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -53,7 +53,7 @@ export type ExtractoProgram = {
       "name": "startThread",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -215,7 +215,7 @@ export type ExtractoProgram = {
       "name": "incrementViaThread",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -244,7 +244,7 @@ export type ExtractoProgram = {
       "name": "increment",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -266,7 +266,7 @@ export type ExtractoProgram = {
       "name": "reset",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -281,7 +281,7 @@ export type ExtractoProgram = {
   ],
   "accounts": [
     {
-      "name": "counter",
+      "name": "runData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -357,10 +357,10 @@ export const IDL: ExtractoProgram = {
       ]
     },
     {
-      "name": "initialize",
+      "name": "startNewRun",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -381,7 +381,7 @@ export const IDL: ExtractoProgram = {
       "name": "startThread",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -543,7 +543,7 @@ export const IDL: ExtractoProgram = {
       "name": "incrementViaThread",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -572,7 +572,7 @@ export const IDL: ExtractoProgram = {
       "name": "increment",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -594,7 +594,7 @@ export const IDL: ExtractoProgram = {
       "name": "reset",
       "accounts": [
         {
-          "name": "counter",
+          "name": "run",
           "isMut": true,
           "isSigner": false
         },
@@ -609,7 +609,7 @@ export const IDL: ExtractoProgram = {
   ],
   "accounts": [
     {
-      "name": "counter",
+      "name": "runData",
       "type": {
         "kind": "struct",
         "fields": [

@@ -32,7 +32,7 @@ export const UnityFrame: React.FC = () => {
     const { publicKey } = useWallet()
     const { showUnityFrame } = useUnityFrameContext()
     const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
-    const { playerDataAddress, playerDataAccount, incrementCounterCallback, initPlayerCallback } = useGameContext()
+    const { playerDataAddress, playerDataAccount, incrementRunCallback, initPlayerCallback } = useGameContext()
 
     useEffect(
         function () {
@@ -120,20 +120,20 @@ export const UnityFrame: React.FC = () => {
         return () => {
             removeEventListener("GameReady", handleGameReady);
         };
-    }, [addEventListener, removeEventListener, handleIncrementCounterFromUnity]);
+    }, [addEventListener, removeEventListener, handleIncrementRunFromUnity]);
 
-    function handleIncrementCounterFromUnity(message: string) {
-        console.log(`React got IncrementCounterFromUnity: ${message}`);
-        incrementCounterCallback();
+    function handleIncrementRunFromUnity(message: string) {
+        console.log(`React got IncrementRunFromUnity: ${message}`);
+        incrementRunCallback();
         return null;
     };
 
     useEffect(() => {
-        addEventListener("IncrementCounterFromUnity", handleIncrementCounterFromUnity);
+        addEventListener("IncrementRunFromUnity", handleIncrementRunFromUnity);
         return () => {
-            removeEventListener("IncrementCounterFromUnity", handleIncrementCounterFromUnity);
+            removeEventListener("IncrementRunFromUnity", handleIncrementRunFromUnity);
         };
-    }, [addEventListener, removeEventListener, handleIncrementCounterFromUnity]);
+    }, [addEventListener, removeEventListener, handleIncrementRunFromUnity]);
 
     function handleInitPlayerFromUnity(playerName: string) {
         console.log(`React got InitPlayerFromUnity: ${playerName}`);
@@ -144,7 +144,7 @@ export const UnityFrame: React.FC = () => {
     useEffect(() => {
         addEventListener("InitPlayerFromUnity", handleInitPlayerFromUnity);
         return () => {
-            removeEventListener("IncrementCounterFromUnity", handleInitPlayerFromUnity);
+            removeEventListener("IncrementRunFromUnity", handleInitPlayerFromUnity);
         };
     }, [addEventListener, removeEventListener, handleInitPlayerFromUnity]);
 

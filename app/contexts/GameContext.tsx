@@ -6,14 +6,14 @@ import { useAnchorContext } from "./AnchorContext";
 import { Thread } from "@clockwork-xyz/sdk";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
-import { incrementCounter } from "../functions/incrementCounter";
 import { useNotificationContext } from "./NotificationContext";
 import { initializePlayer } from "../functions/initializePlayer";
+import { incrementRun } from "../functions/incrementRun";
 
 const PLAYER_SEED = "player";
-const COUNTER_SEED = "counter";
+const RUN_SEED = "run";
 const THREAD_AUTHORITY_SEED = "thread_authority"
-const GAME_COUNTER_THREAD_ID = "game_counter"
+const GAME_RUN_THREAD_ID = "game_run"
 
 export type PlayerDataAccount = {
     authority: PublicKey,
@@ -21,7 +21,7 @@ export type PlayerDataAccount = {
     runsFinished: number,
 }
 
-export type CounterDataAccount = {
+export type RunDataAccount = {
     authority: PublicKey,
     count: anchor.BN,
 }
@@ -30,13 +30,13 @@ export interface GameContextState {
     publicKey: PublicKey,
     playerDataAddress: anchor.web3.PublicKey,
     playerDataAccount: PlayerDataAccount | null | undefined,
-    counterAddress: anchor.web3.PublicKey,
-    counterDataAccount: CounterDataAccount | null,
+    runDataAddress: anchor.web3.PublicKey,
+    runDataAccount: RunDataAccount | null,
     threadId: string,
     threadAuthority: PublicKey,
     thread: PublicKey,
     threadDataAccount: Thread | null,
-    incrementCounterCallback: () => Promise<void>,
+    incrementRunCallback: () => Promise<void>,
     initPlayerCallback: (playerName: string) => Promise<void>
 }
 
@@ -61,7 +61,7 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         else {
             console.log("not UNDEFINED even here")
         }
-    const [counterDataAccount, setCounterDataAccount] = useState<CounterDataAccount | null>(null)
+    const [runDataAccount, setRunDataAccount] = useState<RunDataAccount | null>(null)
     const [threadDataAccount, setThreadDataAccount] = useState<Thread | null>(null)
 
     const playerDataAddress = useMemo(() => {
@@ -95,14 +95,14 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         }
     };
 
-    const counterAddress = useMemo(() => {
+    const runDataAddress = useMemo(() => {
         if (publicKey && program) {
-            const [newCounterAddress, _bump] = PublicKey.findProgramAddressSync(
-                [anchor.utils.bytes.utf8.encode(COUNTER_SEED), program.provider.publicKey.toBuffer()],
+            const [newRunAddress, _bump] = PublicKey.findProgramAddressSync(
+                [anchor.utils.bytes.utf8.encode(RUN_SEED), program.provider.publicKey.toBuffer()],
                 program.programId
             );
 
-            return newCounterAddress;
+            return newRunAddress;
         }
         else {
             return null;
@@ -110,23 +110,23 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     }, [publicKey, program])
 
     useEffect(() => {
-        fetchCounterAccount();
-    }, [counterAddress])
+        fetchRunAccount();
+    }, [runDataAddress])
 
-    const fetchCounterAccount = async () => {
-        console.log("Fetching counter account...")
-        if (counterAddress) {
+    const fetchRunAccount = async () => {
+        console.log("Fetching run account...")
+        if (runDataAddress) {
             try {
-                const newCounterAccount = await program.account.counter.fetch(counterAddress)
-                setCounterDataAccount(newCounterAccount)
+                const newRunAccount = await program.account.runData.fetch(runDataAddress)
+                setRunDataAccount(newRunAccount)
             } catch (error) {
-                console.log(`Error fetching counter state: ${error}`)
-                setCounterDataAccount(null)
+                console.log(`Error fetching run state: ${error}`)
+                setRunDataAccount(null)
             }
         }
         else {
-            console.log("no counter address yet")
-            setCounterDataAccount(null)
+            console.log("no run address yet")
+            setRunDataAccount(null)
         }
     };
 
@@ -150,7 +150,7 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         }
     }, [connection, playerDataAddress, program, publicKey])
 
-    const threadId = GAME_COUNTER_THREAD_ID;
+    const threadId = GAME_RUN_THREAD_ID;
 
     const [threadAuthority] = useMemo(() => {
         if (publicKey && program) {
@@ -191,24 +191,24 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     }
 
     useEffect(() => {
-        if (!counterAddress) return
+        if (!runDataAddress) return
 
         const subscriptionId = connection.onAccountChange(
-            counterAddress,
-            (counterAccountInfo) => {
+            runDataAddress,
+            (runAccountInfo) => {
                 const decodedAccount = program.coder.accounts.decode(
-                    "counter",
-                    counterAccountInfo.data
+                    "runData",
+                    runAccountInfo.data
                 )
-                console.log("Got new counter via socket:", decodedAccount.count.toString())
-                setCounterDataAccount(decodedAccount)
+                console.log("Got new run via socket:", decodedAccount.count.toString())
+                setRunDataAccount(decodedAccount)
             }
         )
 
         return () => {
             connection.removeAccountChangeListener(subscriptionId)
         }
-    }, [connection, counterAddress, program, publicKey])
+    }, [connection, runDataAddress, program, publicKey])
 
     useEffect(() => {
         if (!thread) return
@@ -225,9 +225,9 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         }
     }, [connection, thread, program, publicKey])
 
-    const incrementCounterFromUnity = useCallback(async () => {
-        await incrementCounter(publicKey, program, counterAddress, sendTransaction, connection, showNotification)
-    }, [publicKey, counterAddress])
+    const incrementRunFromUnity = useCallback(async () => {
+        await incrementRun(publicKey, program, runDataAddress, sendTransaction, connection, showNotification)
+    }, [publicKey, runDataAddress])
 
     const initPlayerFromUnity = useCallback(async (playerName: string) => {
         await initializePlayer(playerName, publicKey, program, connection, playerDataAddress, playerDataAccount, showNotification, sendTransaction)
@@ -238,13 +238,13 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
             publicKey,
             playerDataAddress,
             playerDataAccount,
-            counterAddress,
-            counterDataAccount,
+            runDataAddress: runDataAddress,
+            runDataAccount,
             threadId,
             threadAuthority,
             thread,
             threadDataAccount,
-            incrementCounterCallback: incrementCounterFromUnity,
+            incrementRunCallback: incrementRunFromUnity,
             initPlayerCallback: initPlayerFromUnity
         }}>
             {children}
