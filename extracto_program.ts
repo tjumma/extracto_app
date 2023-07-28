@@ -37,6 +37,11 @@ export type ExtractoProgram = {
           "isSigner": false
         },
         {
+          "name": "playerData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "user",
           "isMut": true,
           "isSigner": true
@@ -45,6 +50,27 @@ export type ExtractoProgram = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "finishRun",
+      "accounts": [
+        {
+          "name": "run",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "playerData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player",
+          "isMut": true,
+          "isSigner": true
         }
       ],
       "args": []
@@ -312,6 +338,14 @@ export type ExtractoProgram = {
           {
             "name": "runsFinished",
             "type": "u32"
+          },
+          {
+            "name": "bestScore",
+            "type": "u64"
+          },
+          {
+            "name": "isInRun",
+            "type": "bool"
           }
         ]
       }
@@ -365,6 +399,11 @@ export const IDL: ExtractoProgram = {
           "isSigner": false
         },
         {
+          "name": "playerData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "user",
           "isMut": true,
           "isSigner": true
@@ -373,6 +412,27 @@ export const IDL: ExtractoProgram = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "finishRun",
+      "accounts": [
+        {
+          "name": "run",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "playerData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player",
+          "isMut": true,
+          "isSigner": true
         }
       ],
       "args": []
@@ -640,6 +700,14 @@ export const IDL: ExtractoProgram = {
           {
             "name": "runsFinished",
             "type": "u32"
+          },
+          {
+            "name": "bestScore",
+            "type": "u64"
+          },
+          {
+            "name": "isInRun",
+            "type": "bool"
           }
         ]
       }

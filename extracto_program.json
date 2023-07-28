@@ -37,6 +37,11 @@
           "isSigner": false
         },
         {
+          "name": "playerData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "user",
           "isMut": true,
           "isSigner": true
@@ -45,6 +50,27 @@
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "finishRun",
+      "accounts": [
+        {
+          "name": "run",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "playerData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player",
+          "isMut": true,
+          "isSigner": true
         }
       ],
       "args": []
@@ -312,6 +338,14 @@
           {
             "name": "runsFinished",
             "type": "u32"
+          },
+          {
+            "name": "bestScore",
+            "type": "u64"
+          },
+          {
+            "name": "isInRun",
+            "type": "bool"
           }
         ]
       }

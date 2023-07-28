@@ -1,7 +1,7 @@
 'use client'
 
 import { Flex, Text } from "@chakra-ui/react"
-import { InitializeRun } from "../components/InitializeRun"
+import { StartNewRun } from "../components/StartNewRun"
 import { IncrementRun } from "../components/IncrementRun"
 import { ResetRun } from "../components/ResetRun"
 import { StartThread } from "../components/StartThread"
@@ -13,6 +13,7 @@ import { CreateSession } from "../components/CreateSession";
 import { RevokeSession } from "../components/RevokeSession";
 import { IncrementViaSession } from "../components/IncrementViaSession";
 import { InitializePlayer } from "../components/InitializePlayer"
+import { FinishRun } from "../components/FinishRun"
 
 export const ClockworkView: React.FC = () => {
 
@@ -23,6 +24,7 @@ export const ClockworkView: React.FC = () => {
             <Flex direction="column" alignItems={"center"} textAlign={"center"} width="50%">
                 <Text mb={5}>{`PlayerData address: ${playerDataAddress}`}</Text>
                 <Text mb={5}>{`Player name: ${playerDataAccount ? playerDataAccount.name : "null"}`}</Text>
+                <Text mb={5}>{`Best score: ${playerDataAccount ? playerDataAccount.bestScore : "0"}`}</Text>
                 <Text mb={5}>{`Run address: ${runDataAddress}`}</Text>
                 <Text mb={5}>{`Run: ${runDataAccount ? runDataAccount.score : "null"}`}</Text>
                 <Text mb={5}>{`Current thread id: ${runDataAccount ? threadId : null}`}</Text>
@@ -38,7 +40,8 @@ export const ClockworkView: React.FC = () => {
             </Flex>
             <Flex direction="column" alignItems={"center"} width="50%">
                 <InitializePlayer />
-                <InitializeRun />
+                <StartNewRun />
+                <FinishRun />
                 <CreateSession />
                 <RevokeSession />
                 <IncrementViaSession />

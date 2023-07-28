@@ -10,7 +10,7 @@ import { incrementRun } from "../functions/incrementRun"
 
 export const IncrementRun: FC = () => {
 
-    const { runDataAddress } = useGameContext()
+    const { runDataAddress, runDataAccount, playerDataAccount } = useGameContext()
     const { publicKey, sendTransaction } = useWallet()
     const { program } = useAnchorContext()
     const { connection } = useConnection();
@@ -18,11 +18,13 @@ export const IncrementRun: FC = () => {
 
     const [isLoading, setLoading] = useState(false)
 
+    const cantIncrementRun = (!publicKey || !program || !runDataAddress || !runDataAccount || !playerDataAccount.isInRun)
+
     const incrementRunCallback = useCallback(async () => {
-        await incrementRun(publicKey, program, runDataAddress, sendTransaction, connection, showNotification, setLoading)
+        await incrementRun(publicKey, program, playerDataAccount, runDataAddress, runDataAccount, sendTransaction, connection, showNotification, setLoading)
     }, [publicKey, runDataAddress])
 
     return (
-        <Button isLoading={isLoading} onClick={incrementRunCallback} isDisabled={!publicKey || !program || !runDataAddress} mb={5}>Increment manually</Button>
+        <Button isLoading={isLoading} onClick={incrementRunCallback} isDisabled={cantIncrementRun} mb={5}>Increment manually</Button>
     )
 }

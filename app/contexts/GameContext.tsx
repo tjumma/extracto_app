@@ -19,6 +19,8 @@ export type PlayerDataAccount = {
     authority: PublicKey,
     name: string,
     runsFinished: number,
+    bestScore: anchor.BN,
+    isInRun: boolean
 }
 
 export type RunDataAccount = {
@@ -219,7 +221,7 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     }, [connection, thread, program, publicKey])
 
     const incrementRunFromUnity = useCallback(async () => {
-        await incrementRun(publicKey, program, runDataAddress, sendTransaction, connection, showNotification)
+        await incrementRun(publicKey, program, playerDataAccount, runDataAddress, runDataAccount, sendTransaction, connection, showNotification)
     }, [publicKey, runDataAddress])
 
     const initPlayerFromUnity = useCallback(async (playerName: string) => {

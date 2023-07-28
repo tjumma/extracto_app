@@ -1,22 +1,22 @@
 import * as anchor from "@coral-xyz/anchor"
 
-export const initializeRun = async (publicKey, program, runDataAddress, runDataAccount, showNotification, setLoading, sendTransaction, connection,) => {
-    console.log("Initialize run");
+export const finishRun = async (publicKey, program, runDataAddress, runDataAccount, playerDataAddress, playerDataAccount, showNotification, setLoading, sendTransaction, connection,) => {
+    console.log("Finish run");
 
-    const cantInitializeRun = (!publicKey || !program || !runDataAddress || runDataAccount !== null)
+    const cantFinishRun = (!publicKey || !program || !runDataAddress || !runDataAccount || !playerDataAddress || !playerDataAccount || !playerDataAccount.isInRun)
 
-    if (cantInitializeRun)
+    if (cantFinishRun)
         return;
 
     try {
         setLoading(true)
 
         const tx = await program.methods
-            .startNewRun()
+            .finishRun()
             .accounts({
                 run: runDataAddress,
-                user: publicKey,
-                systemProgram: anchor.web3.SystemProgram.programId,
+                playerData: playerDataAddress,
+                player: publicKey,
             })
             .transaction()
 
@@ -36,10 +36,10 @@ export const initializeRun = async (publicKey, program, runDataAddress, runDataA
 
         showNotification({
             status: "success",
-            title: "Run initialized!",
-            description: `Run account initialized`,
-            link: `https://solana.fm/tx/${txSig}?cluster=devnet`,
-            linkText: "Transaction"
+            title: "Run finished!",
+            description: `Run is over`,
+            // link: `https://solana.fm/tx/${txSig}?cluster=devnet`,
+            // linkText: "Transaction"
         })
     }
     catch (e) {
@@ -47,7 +47,7 @@ export const initializeRun = async (publicKey, program, runDataAddress, runDataA
 
         showNotification({
             status: "error",
-            title: "Initialize error!",
+            title: "Finish run error!",
             description: `${e}`,
         })
     }

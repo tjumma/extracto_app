@@ -6,11 +6,11 @@ import { useNotificationContext } from "../contexts/NotificationContext";
 import { useAnchorContext } from "../contexts/AnchorContext";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useGameContext } from "../contexts/GameContext";
-import { initializeRun } from "../functions/initializeRun"
+import { startNewRun } from "../functions/startNewRun"
 
-export const InitializeRun: FC = () => {
+export const StartNewRun: FC = () => {
 
-    const { runDataAddress, runDataAccount } = useGameContext()
+    const { runDataAddress, runDataAccount, playerDataAddress, playerDataAccount } = useGameContext()
     const { publicKey, sendTransaction } = useWallet()
     const { program } = useAnchorContext()
     const { connection } = useConnection();
@@ -18,13 +18,13 @@ export const InitializeRun: FC = () => {
 
     const [isLoading, setLoading] = useState(false)
 
-    const cantInitializeRun = ( !publicKey || !program || !runDataAddress || runDataAccount !== null)
+    const cantInitializeRun = ( !publicKey || !program || !runDataAddress || !playerDataAccount || playerDataAccount.isInRun)
 
-    const initializeRunCallback = useCallback(async () => {
-        await initializeRun(publicKey, program, runDataAddress, runDataAccount, showNotification, setLoading, sendTransaction, connection)
+    const startNewRunCallback = useCallback(async () => {
+        await startNewRun(publicKey, program, playerDataAccount, runDataAddress, runDataAccount, playerDataAddress, showNotification, setLoading, sendTransaction, connection)
     }, [publicKey, runDataAddress, runDataAccount])
 
     return (
-        <Button isLoading={isLoading} onClick={initializeRunCallback} isDisabled={cantInitializeRun} mb={5}>Initialize run account</Button>
+        <Button isLoading={isLoading} onClick={startNewRunCallback} isDisabled={cantInitializeRun} mb={5}>Start new run</Button>
     )
 }
