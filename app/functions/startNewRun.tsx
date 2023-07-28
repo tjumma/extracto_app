@@ -1,23 +1,26 @@
-import * as anchor from "@coral-xyz/anchor"
+import { SystemProgram } from "@solana/web3.js";
 
-export const startNewRun = async (publicKey, program, playerDataAccount, runDataAddress, runDataAccount, playerDataAddress, showNotification, setLoading, sendTransaction, connection,) => {
+export const startNewRun = async (publicKey, program, playerDataAccount, runDataAddress, runDataAccount, playerDataAddress, showNotification, sendTransaction, connection, clockworkProvider, thread, threadAuthority, threadId, setLoading) => {
     console.log("Start new run");
 
-    const cantInitializeRun = ( !publicKey || !program || !runDataAddress || !playerDataAccount || playerDataAccount.isInRun)
+    const cantStartNewRun = (!publicKey || !program || !runDataAddress || !playerDataAccount || playerDataAccount.isInRun || !thread || !threadAuthority || !threadId)
 
-    if (cantInitializeRun)
+    if (cantStartNewRun)
         return;
 
     try {
         setLoading(true)
 
         const tx = await program.methods
-            .startNewRun()
+            .startNewRun(Buffer.from(threadId))
             .accounts({
                 run: runDataAddress,
                 playerData: playerDataAddress,
-                user: publicKey,
-                systemProgram: anchor.web3.SystemProgram.programId,
+                player: publicKey,
+                systemProgram: SystemProgram.programId,
+                clockworkProgram: clockworkProvider.threadProgram.programId,
+                thread: thread,
+                threadAuthority: threadAuthority,
             })
             .transaction()
 

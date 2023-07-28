@@ -222,11 +222,11 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
 
     const incrementRunFromUnity = useCallback(async () => {
         await incrementRun(publicKey, program, playerDataAccount, runDataAddress, runDataAccount, sendTransaction, connection, showNotification)
-    }, [publicKey, runDataAddress])
+    }, [publicKey, runDataAddress, runDataAccount, playerDataAccount])
 
     const initPlayerFromUnity = useCallback(async (playerName: string) => {
-        await initializePlayer(playerName, publicKey, program, connection, playerDataAddress, playerDataAccount, showNotification, sendTransaction)
-    }, [publicKey, playerDataAddress, playerDataAccount])
+        await initializePlayer(playerName, publicKey, program, connection, playerDataAddress, playerDataAccount, runDataAddress, runDataAccount, showNotification, sendTransaction)
+    }, [publicKey, playerDataAddress, playerDataAccount, runDataAddress, runDataAccount])
 
     return (
         <GameContext.Provider value={{

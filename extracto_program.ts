@@ -11,6 +11,11 @@ export type ExtractoProgram = {
           "isSigner": false
         },
         {
+          "name": "run",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "player",
           "isMut": true,
           "isSigner": true
@@ -42,17 +47,37 @@ export type ExtractoProgram = {
           "isSigner": false
         },
         {
-          "name": "user",
+          "name": "player",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "clockworkProgram",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "thread",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "threadAuthority",
+          "isMut": false,
+          "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "threadId",
+          "type": "bytes"
+        }
+      ]
     },
     {
       "name": "finishRun",
@@ -373,6 +398,11 @@ export const IDL: ExtractoProgram = {
           "isSigner": false
         },
         {
+          "name": "run",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "player",
           "isMut": true,
           "isSigner": true
@@ -404,17 +434,37 @@ export const IDL: ExtractoProgram = {
           "isSigner": false
         },
         {
-          "name": "user",
+          "name": "player",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "clockworkProgram",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "thread",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "threadAuthority",
+          "isMut": false,
+          "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "threadId",
+          "type": "bytes"
+        }
+      ]
     },
     {
       "name": "finishRun",

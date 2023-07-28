@@ -10,7 +10,7 @@ import { initializePlayer } from "../functions/initializePlayer";
 
 export const InitializePlayer: FC = () => {
 
-    const { playerDataAddress, playerDataAccount } = useGameContext()
+    const { playerDataAddress, playerDataAccount, runDataAddress, runDataAccount } = useGameContext()
     const { publicKey, sendTransaction } = useWallet()
     const { program } = useAnchorContext()
     const { connection } = useConnection();
@@ -21,11 +21,11 @@ export const InitializePlayer: FC = () => {
     const [name, setName] = useState("")
     const handleNameChange = (event) => setName(event.target.value)
 
-    const cantInitializePlayer = (!publicKey || !program || !playerDataAddress || playerDataAccount !== null)
+    const cantInitializePlayer = ( !publicKey || !program || !playerDataAddress || playerDataAccount !== null || !runDataAddress)
 
     const initializePlayerCallback = useCallback(async (playerName: string) => {
-        await initializePlayer(playerName, publicKey, program, connection, playerDataAddress, playerDataAccount, showNotification, sendTransaction, setLoading)
-    }, [publicKey, playerDataAddress, playerDataAccount])
+        await initializePlayer(playerName, publicKey, program, connection, playerDataAddress, playerDataAccount, runDataAddress, runDataAccount, showNotification, sendTransaction, setLoading)
+    }, [publicKey, playerDataAddress, playerDataAccount, runDataAddress, runDataAccount])
 
     return (
         <>

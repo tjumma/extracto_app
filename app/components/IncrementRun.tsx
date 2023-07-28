@@ -18,11 +18,11 @@ export const IncrementRun: FC = () => {
 
     const [isLoading, setLoading] = useState(false)
 
-    const cantIncrementRun = (!publicKey || !program || !runDataAddress || !runDataAccount || !playerDataAccount.isInRun)
+    const cantIncrementRun = (!publicKey || !program || !runDataAddress || !runDataAccount || !playerDataAccount || !playerDataAccount.isInRun)
 
     const incrementRunCallback = useCallback(async () => {
         await incrementRun(publicKey, program, playerDataAccount, runDataAddress, runDataAccount, sendTransaction, connection, showNotification, setLoading)
-    }, [publicKey, runDataAddress])
+    }, [publicKey, runDataAddress, runDataAccount, playerDataAccount])
 
     return (
         <Button isLoading={isLoading} onClick={incrementRunCallback} isDisabled={cantIncrementRun} mb={5}>Increment manually</Button>

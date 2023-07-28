@@ -1,9 +1,9 @@
 import * as anchor from "@coral-xyz/anchor"
 
-export const initializePlayer = async (name, publicKey, program, connection, playerDataAddress, playerDataAccount, showNotification, sendTransaction, setLoading?) => {
+export const initializePlayer = async (name, publicKey, program, connection, playerDataAddress, playerDataAccount, runDataAddress, runDataAccount, showNotification, sendTransaction, setLoading?) => {
     console.log("Initialize PlayerData");
 
-    const cantInitializePlayer = ( !publicKey || !program || !playerDataAddress || playerDataAccount !== null)
+    const cantInitializePlayer = ( !publicKey || !program || !playerDataAddress || playerDataAccount !== null || !runDataAddress)
 
     if (cantInitializePlayer)
         return;
@@ -15,6 +15,7 @@ export const initializePlayer = async (name, publicKey, program, connection, pla
             .initPlayer(name)
             .accounts({
                 playerData: playerDataAddress,
+                run: runDataAddress,
                 player: publicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             })
