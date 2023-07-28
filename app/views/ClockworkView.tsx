@@ -22,12 +22,13 @@ export const ClockworkView: React.FC = () => {
     return (
         <Flex direction={"row"} px={0} pb={20} pt={10}>
             <Flex direction="column" alignItems={"center"} textAlign={"center"} width="50%">
-                <Text mb={5}>{`PlayerData address: ${playerDataAddress}`}</Text>
+                {/* <Text mb={5}>{`PlayerData address: ${playerDataAddress}`}</Text> */}
                 <Text mb={5}>{`Player name: ${playerDataAccount ? playerDataAccount.name : "null"}`}</Text>
+                <Text mb={5}>{`Runs finished: ${playerDataAccount ? playerDataAccount.runsFinished : "0"}`}</Text>
                 <Text mb={5}>{`Best score: ${playerDataAccount ? playerDataAccount.bestScore : "0"}`}</Text>
-                <Text mb={5}>{`Run address: ${runDataAddress}`}</Text>
-                <Text mb={5}>{`Run: ${runDataAccount ? runDataAccount.score : "null"}`}</Text>
-                <Text mb={5}>{`Current thread id: ${runDataAccount ? threadId : null}`}</Text>
+                {/* <Text mb={5}>{`Run address: ${runDataAddress}`}</Text> */}
+                <Text mb={5}>{`Current Run: ${runDataAccount && playerDataAccount.isInRun ? runDataAccount.score : "null"}`}</Text>
+                {/* <Text mb={5}>{`Current thread id: ${runDataAccount ? threadId : null}`}</Text>
                 <Text mb={5}>{`Current thread authority address: ${runDataAccount ? threadAuthority : null}`}</Text>
                 <Text mb={5}>{`Current thread address: ${thread}`}</Text>
                 <Text mb={5}>{`thread id: ${threadDataAccount ? threadDataAccount.id : "null"}`}</Text>
@@ -36,7 +37,7 @@ export const ClockworkView: React.FC = () => {
                 <Text mb={5}>{`thread name: ${threadDataAccount ? threadDataAccount.name : "null"}`}</Text>
                 <Text mb={5}>{`thread created at: ${threadDataAccount ? (new Date(threadDataAccount.createdAt.unixTimestamp.toNumber() * 1000)).toDateString() : "null"}`}</Text>
                 <Text mb={5}>{`thread exec since reimb: ${threadDataAccount && threadDataAccount.execContext ? threadDataAccount.execContext.execsSinceReimbursement : "null"}`}</Text>
-                <Text mb={5}>{`thread last exec at: ${threadDataAccount && threadDataAccount.execContext ? threadDataAccount.execContext.lastExecAt : "null"}`}</Text>
+                <Text mb={5}>{`thread last exec at: ${threadDataAccount && threadDataAccount.execContext ? threadDataAccount.execContext.lastExecAt : "null"}`}</Text> */}
             </Flex>
             <Flex direction="column" alignItems={"center"} width="50%">
                 <InitializePlayer />

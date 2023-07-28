@@ -1,10 +1,10 @@
 'use client'
 
+import * as anchor from "@coral-xyz/anchor"
 import { Flex, Text, Box, Progress, Spacer, Center, AbsoluteCenter } from "@chakra-ui/react"
 import { Unity, useUnityContext } from "react-unity-webgl";
 import { useUnityFrameContext } from "../contexts/UnityFrameContext";
-import { useCallback, useEffect, useState } from "react";
-import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
+import { useEffect, useState } from "react";
 import { useGameContext } from "../contexts/GameContext";
 import { useWallet } from "@solana/wallet-adapter-react";
 
@@ -25,6 +25,9 @@ export type PlayerData = {
     publicKey: string,
     name: string,
     runsFinished: number,
+    bestScore: anchor.BN,
+    isInRun: boolean
+
 }
 
 export const UnityFrame: React.FC = () => {
@@ -32,7 +35,7 @@ export const UnityFrame: React.FC = () => {
     const { publicKey } = useWallet()
     const { showUnityFrame } = useUnityFrameContext()
     const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
-    const { playerDataAddress, playerDataAccount, incrementRunCallback, initPlayerCallback } = useGameContext()
+    const { playerDataAddress, playerDataAccount, initPlayerCallback, startNewRunCallback, finishRunCallback } = useGameContext()
 
     useEffect(
         function () {
@@ -78,7 +81,9 @@ export const UnityFrame: React.FC = () => {
         const playerData: PlayerData = {
             publicKey: publicKey ? publicKey.toString() : "",
             name: playerDataAccount ? playerDataAccount.name : "",
-            runsFinished: playerDataAccount ? playerDataAccount.runsFinished : 0
+            runsFinished: playerDataAccount ? playerDataAccount.runsFinished : 0,
+            bestScore: playerDataAccount? playerDataAccount.bestScore : new anchor.BN(0),
+            isInRun: playerDataAccount? playerDataAccount.isInRun : false
         }
         console.log("sending PlayerData to Unity")
         console.log(JSON.stringify(playerData))
@@ -100,7 +105,9 @@ export const UnityFrame: React.FC = () => {
         const playerData: PlayerData = {
             publicKey: publicKey ? publicKey.toString() : "",
             name: playerDataAccount ? playerDataAccount.name : "",
-            runsFinished: playerDataAccount ? playerDataAccount.runsFinished : 0
+            runsFinished: playerDataAccount ? playerDataAccount.runsFinished : 0,
+            bestScore: playerDataAccount? playerDataAccount.bestScore : new anchor.BN(0),
+            isInRun: playerDataAccount? playerDataAccount.isInRun : false
         }
         console.log("sending PlayerData to Unity")
         console.log(JSON.stringify(playerData))
@@ -113,20 +120,7 @@ export const UnityFrame: React.FC = () => {
         return () => {
             removeEventListener("GameReady", handleGameReady);
         };
-    }, [addEventListener, removeEventListener, handleIncrementRunFromUnity]);
-
-    function handleIncrementRunFromUnity(message: string) {
-        console.log(`React got IncrementRunFromUnity: ${message}`);
-        incrementRunCallback();
-        return null;
-    };
-
-    useEffect(() => {
-        addEventListener("IncrementRunFromUnity", handleIncrementRunFromUnity);
-        return () => {
-            removeEventListener("IncrementRunFromUnity", handleIncrementRunFromUnity);
-        };
-    }, [addEventListener, removeEventListener, handleIncrementRunFromUnity]);
+    }, [addEventListener, removeEventListener, handleStartNewRunFromUnity]);
 
     function handleInitPlayerFromUnity(playerName: string) {
         console.log(`React got InitPlayerFromUnity: ${playerName}`);
@@ -140,6 +134,32 @@ export const UnityFrame: React.FC = () => {
             removeEventListener("IncrementRunFromUnity", handleInitPlayerFromUnity);
         };
     }, [addEventListener, removeEventListener, handleInitPlayerFromUnity]);
+
+    function handleStartNewRunFromUnity() {
+        console.log(`React got StartNewRunFromUnity`);
+        startNewRunCallback();
+        return null;
+    };
+
+    useEffect(() => {
+        addEventListener("StartNewRunFromUnity", handleStartNewRunFromUnity);
+        return () => {
+            removeEventListener("StartNewRunFromUnity", handleStartNewRunFromUnity);
+        };
+    }, [addEventListener, removeEventListener, handleStartNewRunFromUnity]);
+
+    function handleFinishRunFromUnity() {
+        console.log(`React got FinishRunFromUnity`);
+        finishRunCallback();
+        return null;
+    };
+
+    useEffect(() => {
+        addEventListener("FinishRunFromUnity", handleFinishRunFromUnity);
+        return () => {
+            removeEventListener("FinishRunFromUnity", handleFinishRunFromUnity);
+        };
+    }, [addEventListener, removeEventListener, handleFinishRunFromUnity]);
 
     return (
         <>

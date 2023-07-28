@@ -9,6 +9,8 @@ import { PublicKey } from "@solana/web3.js";
 import { useNotificationContext } from "./NotificationContext";
 import { initializePlayer } from "../functions/initializePlayer";
 import { incrementRun } from "../functions/incrementRun";
+import { startNewRun } from "../functions/startNewRun";
+import { finishRun } from "../functions/finishRun";
 
 const PLAYER_SEED = "player";
 const RUN_SEED = "run";
@@ -38,8 +40,9 @@ export interface GameContextState {
     threadAuthority: PublicKey,
     thread: PublicKey,
     threadDataAccount: Thread | null,
-    incrementRunCallback: () => Promise<void>,
     initPlayerCallback: (playerName: string) => Promise<void>
+    startNewRunCallback: () => Promise<void>,
+    finishRunCallback: () => Promise<void>,
 }
 
 export const GameContext = createContext<GameContextState>({} as GameContextState);
@@ -220,13 +223,17 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         }
     }, [connection, thread, program, publicKey])
 
-    const incrementRunFromUnity = useCallback(async () => {
-        await incrementRun(publicKey, program, playerDataAccount, runDataAddress, runDataAccount, sendTransaction, connection, showNotification)
-    }, [publicKey, runDataAddress, runDataAccount, playerDataAccount])
-
     const initPlayerFromUnity = useCallback(async (playerName: string) => {
         await initializePlayer(playerName, publicKey, program, connection, playerDataAddress, playerDataAccount, runDataAddress, runDataAccount, showNotification, sendTransaction)
     }, [publicKey, playerDataAddress, playerDataAccount, runDataAddress, runDataAccount])
+
+    const startNewRunCallback = useCallback(async () => {
+        await startNewRun(publicKey, program, playerDataAccount, runDataAddress, runDataAccount, playerDataAddress, showNotification, sendTransaction, connection, clockworkProvider, thread, threadAuthority, threadId)
+    }, [publicKey, runDataAddress, runDataAccount, thread, threadAuthority, threadId, clockworkProvider])
+
+    const finishRunCallback = useCallback(async () => {
+        await finishRun(publicKey, program, runDataAddress, runDataAccount, playerDataAddress, playerDataAccount, showNotification, sendTransaction, connection, clockworkProvider, thread, threadAuthority)
+    }, [publicKey, runDataAddress, runDataAccount, playerDataAddress, playerDataAccount, threadId, clockworkProvider, threadAuthority, thread, threadDataAccount, showNotification])
 
     return (
         <GameContext.Provider value={{
@@ -239,8 +246,9 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
             threadAuthority,
             thread,
             threadDataAccount,
-            incrementRunCallback: incrementRunFromUnity,
-            initPlayerCallback: initPlayerFromUnity
+            initPlayerCallback: initPlayerFromUnity,
+            startNewRunCallback: startNewRunCallback,
+            finishRunCallback: finishRunCallback
         }}>
             {children}
         </GameContext.Provider>

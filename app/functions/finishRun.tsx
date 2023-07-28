@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor"
 
-export const finishRun = async (publicKey, program, runDataAddress, runDataAccount, playerDataAddress, playerDataAccount, showNotification, setLoading, sendTransaction, connection,) => {
+export const finishRun = async (publicKey, program, runDataAddress, runDataAccount, playerDataAddress, playerDataAccount, showNotification, sendTransaction, connection, clockworkProvider, thread, threadAuthority, setLoading?) => {
     console.log("Finish run");
 
     const cantFinishRun = (!publicKey || !program || !runDataAddress || !runDataAccount || !playerDataAddress || !playerDataAccount || !playerDataAccount.isInRun)
@@ -9,7 +9,7 @@ export const finishRun = async (publicKey, program, runDataAddress, runDataAccou
         return;
 
     try {
-        setLoading(true)
+        if (setLoading) setLoading(true)
 
         const tx = await program.methods
             .finishRun()
@@ -17,6 +17,9 @@ export const finishRun = async (publicKey, program, runDataAddress, runDataAccou
                 run: runDataAddress,
                 playerData: playerDataAddress,
                 player: publicKey,
+                clockworkProgram: clockworkProvider.threadProgram.programId,
+                thread: thread,
+                threadAuthority: threadAuthority
             })
             .transaction()
 
@@ -32,7 +35,7 @@ export const finishRun = async (publicKey, program, runDataAddress, runDataAccou
             signature: txSig,
         })
 
-        setLoading(false)
+        if (setLoading) setLoading(false)
 
         showNotification({
             status: "success",
@@ -43,7 +46,7 @@ export const finishRun = async (publicKey, program, runDataAddress, runDataAccou
         })
     }
     catch (e) {
-        setLoading(false)
+        if (setLoading) setLoading(false)
 
         showNotification({
             status: "error",

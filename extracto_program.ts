@@ -96,6 +96,21 @@ export type ExtractoProgram = {
           "name": "player",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "clockworkProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "thread",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "threadAuthority",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": []
@@ -483,6 +498,21 @@ export const IDL: ExtractoProgram = {
           "name": "player",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "clockworkProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "thread",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "threadAuthority",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": []
