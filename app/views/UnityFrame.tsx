@@ -94,13 +94,9 @@ export const UnityFrame: React.FC = () => {
     }, [publicKey, playerDataAddress, playerDataAccount])
 
     useEffect(() => {
-        // const playerData: PlayerData = {
-        //     publicKey: publicKey ? publicKey.toString() : "",
-        //     name: playerDataAccount ? playerDataAccount.name : "",
-        //     runsFinished: playerDataAccount ? playerDataAccount.runsFinished : 0,
-        //     bestScore: playerDataAccount? playerDataAccount.bestScore : new anchor.BN(0),
-        //     isInRun: playerDataAccount? playerDataAccount.isInRun : false
-        // }
+        if (!playerDataAccount || !playerDataAccount.isInRun)
+            return;
+
         const runDataForUnity: RunDataForUnity = {
             score: runDataAccount? runDataAccount.score.toNumber() : 0,
             slots: runDataAccount? runDataAccount.slots : null
@@ -108,7 +104,7 @@ export const UnityFrame: React.FC = () => {
         console.log("sending RunData to Unity")
         console.log(JSON.stringify(runDataForUnity))
         sendMessage("ReactToUnity", "OnRunUpdated", JSON.stringify(runDataForUnity));
-    }, [publicKey, runDataAddress, runDataAccount])
+    }, [publicKey, runDataAddress, runDataAccount, playerDataAccount])
 
 
 

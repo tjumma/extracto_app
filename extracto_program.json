@@ -364,7 +364,9 @@
             "type": {
               "array": [
                 {
-                  "defined": "CharacterInfo"
+                  "option": {
+                    "defined": "CharacterInfo"
+                  }
                 },
                 7
               ]

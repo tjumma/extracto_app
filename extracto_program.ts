@@ -364,7 +364,9 @@ export type ExtractoProgram = {
             "type": {
               "array": [
                 {
-                  "defined": "CharacterInfo"
+                  "option": {
+                    "defined": "CharacterInfo"
+                  }
                 },
                 7
               ]
@@ -811,7 +813,9 @@ export const IDL: ExtractoProgram = {
             "type": {
               "array": [
                 {
-                  "defined": "CharacterInfo"
+                  "option": {
+                    "defined": "CharacterInfo"
+                  }
                 },
                 7
               ]
