@@ -364,9 +364,7 @@
             "type": {
               "array": [
                 {
-                  "option": {
-                    "defined": "CharacterInfo"
-                  }
+                  "defined": "CharacterInfo"
                 },
                 7
               ]
@@ -424,6 +422,14 @@
           },
           {
             "name": "characterType",
+            "type": "u8"
+          },
+          {
+            "name": "cooldown",
+            "type": "u8"
+          },
+          {
+            "name": "cooldownTimer",
             "type": "u8"
           }
         ]

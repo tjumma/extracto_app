@@ -364,9 +364,7 @@ export type ExtractoProgram = {
             "type": {
               "array": [
                 {
-                  "option": {
-                    "defined": "CharacterInfo"
-                  }
+                  "defined": "CharacterInfo"
                 },
                 7
               ]
@@ -424,6 +422,14 @@ export type ExtractoProgram = {
           },
           {
             "name": "characterType",
+            "type": "u8"
+          },
+          {
+            "name": "cooldown",
+            "type": "u8"
+          },
+          {
+            "name": "cooldownTimer",
             "type": "u8"
           }
         ]
@@ -805,9 +811,7 @@ export const IDL: ExtractoProgram = {
             "type": {
               "array": [
                 {
-                  "option": {
-                    "defined": "CharacterInfo"
-                  }
+                  "defined": "CharacterInfo"
                 },
                 7
               ]
@@ -865,6 +869,14 @@ export const IDL: ExtractoProgram = {
           },
           {
             "name": "characterType",
+            "type": "u8"
+          },
+          {
+            "name": "cooldown",
+            "type": "u8"
+          },
+          {
+            "name": "cooldownTimer",
             "type": "u8"
           }
         ]

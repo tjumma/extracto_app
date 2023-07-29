@@ -34,6 +34,8 @@ export type CharacterInfo = {
     id: number,
     alignment: number,
     characterType: number,
+    cooldown: number,
+    cooldownTimer : number
 }
 
 export interface GameContextState {
