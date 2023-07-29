@@ -6,7 +6,10 @@ export const startNewRun = async (publicKey, program, playerDataAccount, runData
     const cantStartNewRun = (!publicKey || !program || !runDataAddress || !playerDataAccount || playerDataAccount.isInRun || !thread || !threadAuthority || !threadId)
 
     if (cantStartNewRun)
+    {
+        console.log("CANT START NEW RUN")
         return;
+    }
 
     try {
         if (setLoading) setLoading(true)

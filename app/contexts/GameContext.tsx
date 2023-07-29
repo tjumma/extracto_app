@@ -8,7 +8,6 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useNotificationContext } from "./NotificationContext";
 import { initializePlayer } from "../functions/initializePlayer";
-import { incrementRun } from "../functions/incrementRun";
 import { startNewRun } from "../functions/startNewRun";
 import { finishRun } from "../functions/finishRun";
 
@@ -28,6 +27,13 @@ export type PlayerDataAccount = {
 export type RunDataAccount = {
     authority: PublicKey,
     score: anchor.BN,
+    slots: CharacterInfo[]
+}
+
+export type CharacterInfo = {
+    id: number,
+    alignment: number,
+    characterType: number,
 }
 
 export interface GameContextState {
@@ -229,7 +235,7 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
 
     const startNewRunCallback = useCallback(async () => {
         await startNewRun(publicKey, program, playerDataAccount, runDataAddress, runDataAccount, playerDataAddress, showNotification, sendTransaction, connection, clockworkProvider, thread, threadAuthority, threadId)
-    }, [publicKey, runDataAddress, runDataAccount, thread, threadAuthority, threadId, clockworkProvider])
+    }, [publicKey, program, playerDataAccount, runDataAddress, runDataAccount, thread, threadAuthority, threadId, clockworkProvider])
 
     const finishRunCallback = useCallback(async () => {
         await finishRun(publicKey, program, runDataAddress, runDataAccount, playerDataAddress, playerDataAccount, showNotification, sendTransaction, connection, clockworkProvider, thread, threadAuthority)

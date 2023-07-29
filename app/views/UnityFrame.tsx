@@ -1,11 +1,10 @@
 'use client'
 
-import * as anchor from "@coral-xyz/anchor"
 import { Flex, Text, Box, Progress, Spacer, Center, AbsoluteCenter } from "@chakra-ui/react"
 import { Unity, useUnityContext } from "react-unity-webgl";
 import { useUnityFrameContext } from "../contexts/UnityFrameContext";
 import { useEffect, useState } from "react";
-import { useGameContext } from "../contexts/GameContext";
+import { CharacterInfo, useGameContext } from "../contexts/GameContext";
 import { useWallet } from "@solana/wallet-adapter-react";
 
 const isBrowser = () => typeof window !== 'undefined';
@@ -21,13 +20,17 @@ function getWindowPixelRatio() {
     }
 }
 
-export type PlayerData = {
+export type PlayerDataForUnity = {
     publicKey: string,
     name: string,
     runsFinished: number,
-    bestScore: anchor.BN,
+    bestScore: number,
     isInRun: boolean
+}
 
+export type RunDataForUnity = {
+    score: number,
+    slots: CharacterInfo[]
 }
 
 export const UnityFrame: React.FC = () => {
@@ -35,7 +38,7 @@ export const UnityFrame: React.FC = () => {
     const { publicKey } = useWallet()
     const { showUnityFrame } = useUnityFrameContext()
     const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
-    const { playerDataAddress, playerDataAccount, initPlayerCallback, startNewRunCallback, finishRunCallback } = useGameContext()
+    const { playerDataAddress, playerDataAccount, runDataAddress, runDataAccount, initPlayerCallback, startNewRunCallback, finishRunCallback } = useGameContext()
 
     useEffect(
         function () {
@@ -78,17 +81,34 @@ export const UnityFrame: React.FC = () => {
     //REACT TO UNITY
 
     useEffect(() => {
-        const playerData: PlayerData = {
+        const playerData: PlayerDataForUnity = {
             publicKey: publicKey ? publicKey.toString() : "",
             name: playerDataAccount ? playerDataAccount.name : "",
             runsFinished: playerDataAccount ? playerDataAccount.runsFinished : 0,
-            bestScore: playerDataAccount? playerDataAccount.bestScore : new anchor.BN(0),
+            bestScore: playerDataAccount? playerDataAccount.bestScore.toNumber() : 0,
             isInRun: playerDataAccount? playerDataAccount.isInRun : false
         }
         console.log("sending PlayerData to Unity")
         console.log(JSON.stringify(playerData))
         sendMessage("ReactToUnity", "OnPlayerUpdated", JSON.stringify(playerData));
     }, [publicKey, playerDataAddress, playerDataAccount])
+
+    useEffect(() => {
+        // const playerData: PlayerData = {
+        //     publicKey: publicKey ? publicKey.toString() : "",
+        //     name: playerDataAccount ? playerDataAccount.name : "",
+        //     runsFinished: playerDataAccount ? playerDataAccount.runsFinished : 0,
+        //     bestScore: playerDataAccount? playerDataAccount.bestScore : new anchor.BN(0),
+        //     isInRun: playerDataAccount? playerDataAccount.isInRun : false
+        // }
+        const runDataForUnity: RunDataForUnity = {
+            score: runDataAccount? runDataAccount.score.toNumber() : 0,
+            slots: runDataAccount? runDataAccount.slots : null
+        }
+        console.log("sending RunData to Unity")
+        console.log(JSON.stringify(runDataForUnity))
+        sendMessage("ReactToUnity", "OnRunUpdated", JSON.stringify(runDataForUnity));
+    }, [publicKey, runDataAddress, runDataAccount])
 
 
 
@@ -102,11 +122,11 @@ export const UnityFrame: React.FC = () => {
 
     function handleGameReady() {
         console.log(`React got GameReady from Unity`);
-        const playerData: PlayerData = {
+        const playerData: PlayerDataForUnity = {
             publicKey: publicKey ? publicKey.toString() : "",
             name: playerDataAccount ? playerDataAccount.name : "",
             runsFinished: playerDataAccount ? playerDataAccount.runsFinished : 0,
-            bestScore: playerDataAccount? playerDataAccount.bestScore : new anchor.BN(0),
+            bestScore: playerDataAccount? playerDataAccount.bestScore.toNumber() : 0,
             isInRun: playerDataAccount? playerDataAccount.isInRun : false
         }
         console.log("sending PlayerData to Unity")

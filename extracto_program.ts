@@ -358,6 +358,23 @@ export type ExtractoProgram = {
           {
             "name": "score",
             "type": "u64"
+          },
+          {
+            "name": "slots",
+            "type": {
+              "array": [
+                {
+                  "option": {
+                    "defined": "CharacterInfo"
+                  }
+                },
+                7
+              ]
+            }
+          },
+          {
+            "name": "lastCharacterId",
+            "type": "u16"
           }
         ]
       }
@@ -386,6 +403,28 @@ export type ExtractoProgram = {
           {
             "name": "isInRun",
             "type": "bool"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "CharacterInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u16"
+          },
+          {
+            "name": "alignment",
+            "type": "u8"
+          },
+          {
+            "name": "characterType",
+            "type": "u8"
           }
         ]
       }
@@ -760,6 +799,23 @@ export const IDL: ExtractoProgram = {
           {
             "name": "score",
             "type": "u64"
+          },
+          {
+            "name": "slots",
+            "type": {
+              "array": [
+                {
+                  "option": {
+                    "defined": "CharacterInfo"
+                  }
+                },
+                7
+              ]
+            }
+          },
+          {
+            "name": "lastCharacterId",
+            "type": "u16"
           }
         ]
       }
@@ -788,6 +844,28 @@ export const IDL: ExtractoProgram = {
           {
             "name": "isInRun",
             "type": "bool"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "CharacterInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u16"
+          },
+          {
+            "name": "alignment",
+            "type": "u8"
+          },
+          {
+            "name": "characterType",
+            "type": "u8"
           }
         ]
       }
