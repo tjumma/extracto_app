@@ -10,6 +10,9 @@ import { useNotificationContext } from "./NotificationContext";
 import { initializePlayer } from "../functions/initializePlayer";
 import { startNewRun } from "../functions/startNewRun";
 import { finishRun } from "../functions/finishRun";
+import { useSessionWallet } from "@gumhq/react-sdk"
+import { createSession } from "../functions/createSession";
+import { revokeSession } from "../functions/revokeSession";
 
 const PLAYER_SEED = "player";
 const RUN_SEED = "run";
@@ -27,7 +30,9 @@ export type PlayerDataAccount = {
 export type RunDataAccount = {
     authority: PublicKey,
     score: anchor.BN,
-    slots: CharacterInfo[]
+    experience: number,
+    slots: CharacterInfo[],
+    cards: CardInfo[],
 }
 
 export type CharacterInfo = {
@@ -35,7 +40,15 @@ export type CharacterInfo = {
     alignment: number,
     characterType: number,
     cooldown: number,
-    cooldownTimer : number
+    cooldownTimer : number,
+    maxHealth: number,
+    health: number,
+    attackDamage: number
+}
+
+export type CardInfo = {
+    id: number,
+    cardType: number
 }
 
 export interface GameContextState {
@@ -51,6 +64,7 @@ export interface GameContextState {
     initPlayerCallback: (playerName: string) => Promise<void>
     startNewRunCallback: () => Promise<void>,
     finishRunCallback: () => Promise<void>,
+    upgradeCallback: (cardId: number, slotId: number) => Promise<void>
 }
 
 export const GameContext = createContext<GameContextState>({} as GameContextState);
@@ -69,6 +83,7 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     const [playerDataAccount, setPlayerDataAccount] = useState<PlayerDataAccount | null | undefined>()
     const [runDataAccount, setRunDataAccount] = useState<RunDataAccount | null>(null)
     const [threadDataAccount, setThreadDataAccount] = useState<Thread | null>(null)
+    const sessionWallet = useSessionWallet();
 
     const playerDataAddress = useMemo(() => {
         if (publicKey && program) {
@@ -236,12 +251,49 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     }, [publicKey, playerDataAddress, playerDataAccount, runDataAddress, runDataAccount])
 
     const startNewRunCallback = useCallback(async () => {
+        await createSession(publicKey, program, sessionWallet, showNotification)
         await startNewRun(publicKey, program, playerDataAccount, runDataAddress, runDataAccount, playerDataAddress, showNotification, sendTransaction, connection, clockworkProvider, thread, threadAuthority, threadId)
     }, [publicKey, program, playerDataAccount, runDataAddress, runDataAccount, thread, threadAuthority, threadId, clockworkProvider])
 
     const finishRunCallback = useCallback(async () => {
+        await revokeSession(publicKey, sessionWallet, showNotification)
         await finishRun(publicKey, program, runDataAddress, runDataAccount, playerDataAddress, playerDataAccount, showNotification, sendTransaction, connection, clockworkProvider, thread, threadAuthority)
     }, [publicKey, runDataAddress, runDataAccount, playerDataAddress, playerDataAccount, threadId, clockworkProvider, threadAuthority, thread, threadDataAccount, showNotification])
+
+    const upgradeCallback = useCallback(async (cardSlot: number, characterSlotIndex: number) => {
+
+        try {
+            const tx = await program.methods
+                .upgrade(cardSlot, characterSlotIndex)
+                .accounts({
+                    run: runDataAddress,
+                    user: sessionWallet.publicKey!,
+                    sessionToken: sessionWallet.sessionToken
+                })
+                .transaction()
+    
+            const txIds = await sessionWallet.signAndSendTransaction(tx)
+    
+            if (txIds && txIds.length > 0) {
+                showNotification({
+                    status: "success",
+                    title: "Upgraded via session",
+                    description: `Successfully upgraded via session`,
+                })
+            } else {
+                showNotification({
+                    status: "error",
+                    title: "Upgrade via session error!",
+                })
+            }
+        } catch (e) {
+            showNotification({
+                status: "error",
+                title: "Upgrade via session error!",
+                description: `${e}`,
+            })
+        }
+    }, [publicKey, runDataAddress, runDataAccount, playerDataAddress, playerDataAccount, threadId, threadAuthority, clockworkProvider, threadDataAccount, showNotification])
 
     return (
         <GameContext.Provider value={{
@@ -256,7 +308,8 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
             threadDataAccount,
             initPlayerCallback: initPlayerFromUnity,
             startNewRunCallback: startNewRunCallback,
-            finishRunCallback: finishRunCallback
+            finishRunCallback: finishRunCallback,
+            upgradeCallback: upgradeCallback
         }}>
             {children}
         </GameContext.Provider>

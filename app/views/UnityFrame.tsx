@@ -4,7 +4,7 @@ import { Flex, Text, Box, Progress, Spacer, Center, AbsoluteCenter } from "@chak
 import { Unity, useUnityContext } from "react-unity-webgl";
 import { useUnityFrameContext } from "../contexts/UnityFrameContext";
 import { useEffect, useState } from "react";
-import { CharacterInfo, useGameContext } from "../contexts/GameContext";
+import { CardInfo, CharacterInfo, useGameContext } from "../contexts/GameContext";
 import { useWallet } from "@solana/wallet-adapter-react";
 
 const isBrowser = () => typeof window !== 'undefined';
@@ -30,7 +30,9 @@ export type PlayerDataForUnity = {
 
 export type RunDataForUnity = {
     score: number,
-    slots: CharacterInfo[]
+    experience: number,
+    slots: CharacterInfo[],
+    cards: CardInfo[],
 }
 
 export const UnityFrame: React.FC = () => {
@@ -38,7 +40,7 @@ export const UnityFrame: React.FC = () => {
     const { publicKey } = useWallet()
     const { showUnityFrame } = useUnityFrameContext()
     const [pixelRatio, setPixelRatio] = useState(() => getWindowPixelRatio())
-    const { playerDataAddress, playerDataAccount, runDataAddress, runDataAccount, initPlayerCallback, startNewRunCallback, finishRunCallback } = useGameContext()
+    const { playerDataAddress, playerDataAccount, runDataAddress, runDataAccount, initPlayerCallback, startNewRunCallback, finishRunCallback, upgradeCallback } = useGameContext()
 
     useEffect(
         function () {
@@ -99,7 +101,9 @@ export const UnityFrame: React.FC = () => {
 
         const runDataForUnity: RunDataForUnity = {
             score: runDataAccount? runDataAccount.score.toNumber() : 0,
-            slots: runDataAccount? runDataAccount.slots : null
+            experience: runDataAccount? runDataAccount.experience : 0,
+            slots: runDataAccount? runDataAccount.slots : null,
+            cards: runDataAccount? runDataAccount.cards : null
         }
         console.log("sending RunData to Unity")
         console.log(JSON.stringify(runDataForUnity))
@@ -176,6 +180,19 @@ export const UnityFrame: React.FC = () => {
             removeEventListener("FinishRunFromUnity", handleFinishRunFromUnity);
         };
     }, [addEventListener, removeEventListener, handleFinishRunFromUnity]);
+
+    function handleUpgradeFromUnity(cardIndex: number, characterSlotIndex: number) {
+        console.log(`React got UpgradeFromUnity`);
+        upgradeCallback(cardIndex, characterSlotIndex);
+        return null;
+    };
+
+    useEffect(() => {
+        addEventListener("UpgradeFromUnity", handleUpgradeFromUnity);
+        return () => {
+            removeEventListener("UpgradeFromUnity", handleUpgradeFromUnity);
+        };
+    }, [addEventListener, removeEventListener, handleUpgradeFromUnity]);
 
     return (
         <>

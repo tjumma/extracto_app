@@ -329,6 +329,37 @@ export type ExtractoProgram = {
       "args": []
     },
     {
+      "name": "upgrade",
+      "accounts": [
+        {
+          "name": "run",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "sessionToken",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": true
+        }
+      ],
+      "args": [
+        {
+          "name": "cardSlot",
+          "type": "u16"
+        },
+        {
+          "name": "characterSlotIndex",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "reset",
       "accounts": [
         {
@@ -360,6 +391,10 @@ export type ExtractoProgram = {
             "type": "u64"
           },
           {
+            "name": "experience",
+            "type": "u16"
+          },
+          {
             "name": "slots",
             "type": {
               "array": [
@@ -374,6 +409,21 @@ export type ExtractoProgram = {
           },
           {
             "name": "lastCharacterId",
+            "type": "u16"
+          },
+          {
+            "name": "cards",
+            "type": {
+              "array": [
+                {
+                  "defined": "CardInfo"
+                },
+                3
+              ]
+            }
+          },
+          {
+            "name": "lastCardId",
             "type": "u16"
           }
         ]
@@ -432,6 +482,34 @@ export type ExtractoProgram = {
           },
           {
             "name": "cooldownTimer",
+            "type": "u8"
+          },
+          {
+            "name": "maxHealth",
+            "type": "u8"
+          },
+          {
+            "name": "health",
+            "type": "u8"
+          },
+          {
+            "name": "attackDamage",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CardInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u16"
+          },
+          {
+            "name": "cardType",
             "type": "u8"
           }
         ]
@@ -778,6 +856,37 @@ export const IDL: ExtractoProgram = {
       "args": []
     },
     {
+      "name": "upgrade",
+      "accounts": [
+        {
+          "name": "run",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "sessionToken",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": true
+        }
+      ],
+      "args": [
+        {
+          "name": "cardSlot",
+          "type": "u16"
+        },
+        {
+          "name": "characterSlotIndex",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "reset",
       "accounts": [
         {
@@ -809,6 +918,10 @@ export const IDL: ExtractoProgram = {
             "type": "u64"
           },
           {
+            "name": "experience",
+            "type": "u16"
+          },
+          {
             "name": "slots",
             "type": {
               "array": [
@@ -823,6 +936,21 @@ export const IDL: ExtractoProgram = {
           },
           {
             "name": "lastCharacterId",
+            "type": "u16"
+          },
+          {
+            "name": "cards",
+            "type": {
+              "array": [
+                {
+                  "defined": "CardInfo"
+                },
+                3
+              ]
+            }
+          },
+          {
+            "name": "lastCardId",
             "type": "u16"
           }
         ]
@@ -881,6 +1009,34 @@ export const IDL: ExtractoProgram = {
           },
           {
             "name": "cooldownTimer",
+            "type": "u8"
+          },
+          {
+            "name": "maxHealth",
+            "type": "u8"
+          },
+          {
+            "name": "health",
+            "type": "u8"
+          },
+          {
+            "name": "attackDamage",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CardInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u16"
+          },
+          {
+            "name": "cardType",
             "type": "u8"
           }
         ]
