@@ -1,13 +1,11 @@
 import { SystemProgram } from "@solana/web3.js";
 
 export const startNewRun = async (publicKey, program, playerDataAccount, runDataAddress, runDataAccount, playerDataAddress, showNotification, sendTransaction, connection, clockworkProvider, thread, threadAuthority, threadId, setLoading?) => {
-    console.log("Start new run");
 
     const cantStartNewRun = (!publicKey || !program || !runDataAddress || !playerDataAccount || playerDataAccount.isInRun || !thread || !threadAuthority || !threadId)
 
     if (cantStartNewRun)
     {
-        console.log("CANT START NEW RUN")
         return;
     }
 

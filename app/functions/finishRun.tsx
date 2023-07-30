@@ -1,7 +1,6 @@
 import * as anchor from "@coral-xyz/anchor"
 
 export const finishRun = async (publicKey, program, runDataAddress, runDataAccount, playerDataAddress, playerDataAccount, showNotification, sendTransaction, connection, clockworkProvider, thread, threadAuthority, setLoading?) => {
-    console.log("Finish run");
 
     const cantFinishRun = (!publicKey || !program || !runDataAddress || !runDataAccount || !playerDataAddress || !playerDataAccount || !playerDataAccount.isInRun)
 

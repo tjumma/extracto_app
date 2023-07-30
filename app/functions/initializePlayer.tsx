@@ -1,8 +1,6 @@
 import * as anchor from "@coral-xyz/anchor"
 
 export const initializePlayer = async (name, publicKey, program, connection, playerDataAddress, playerDataAccount, runDataAddress, runDataAccount, showNotification, sendTransaction, setLoading?) => {
-    console.log("Initialize PlayerData");
-
     const cantInitializePlayer = ( !publicKey || !program || !playerDataAddress || playerDataAccount !== null || !runDataAddress)
 
     if (cantInitializePlayer)

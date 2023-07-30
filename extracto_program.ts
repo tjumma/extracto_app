@@ -495,6 +495,10 @@ export type ExtractoProgram = {
           {
             "name": "attackDamage",
             "type": "u8"
+          },
+          {
+            "name": "state",
+            "type": "u8"
           }
         ]
       }
@@ -1021,6 +1025,10 @@ export const IDL: ExtractoProgram = {
           },
           {
             "name": "attackDamage",
+            "type": "u8"
+          },
+          {
+            "name": "state",
             "type": "u8"
           }
         ]

@@ -1,5 +1,4 @@
 export const resetRun = async (publicKey, program, runDataAddress, setLoading, sendTransaction, connection, showNotification) => {
-    console.log("Reset run");
 
     if (!publicKey || !program || !runDataAddress)
         return;

@@ -43,7 +43,8 @@ export type CharacterInfo = {
     cooldownTimer : number,
     maxHealth: number,
     health: number,
-    attackDamage: number
+    attackDamage: number,
+    state: number
 }
 
 export type CardInfo = {
@@ -104,13 +105,12 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     }, [playerDataAddress])
 
     const fetchPlayerDataAccount = async () => {
-        console.log("Fetching PlayerData account...")
+
         if (playerDataAddress) {
             try {
                 const newPlayerDataAccount = await program.account.playerData.fetch(playerDataAddress)
                 setPlayerDataAccount(newPlayerDataAccount)
             } catch (error) {
-                console.log(`Error fetching PlayerData account: ${error}`)
                 setPlayerDataAccount(null)
             }
         }
@@ -135,18 +135,15 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     }, [runDataAddress])
 
     const fetchRunAccount = async () => {
-        console.log("Fetching run account...")
         if (runDataAddress) {
             try {
                 const newRunAccount = await program.account.runData.fetch(runDataAddress)
                 setRunDataAccount(newRunAccount)
             } catch (error) {
-                console.log(`Error fetching run state: ${error}`)
                 setRunDataAccount(null)
             }
         }
         else {
-            console.log("no run address yet")
             setRunDataAccount(null)
         }
     };
@@ -161,7 +158,6 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
                     "playerData",
                     playerDataAccountInfo.data
                 )
-                console.log("Got new PlayerData via socket")
                 setPlayerDataAccount(decodedAccount)
             }
         )
@@ -196,7 +192,6 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     }, [clockworkProvider, thread])
 
     const fetchThreadAccount = async () => {
-        console.log("Fetching thread account...")
         if (!clockworkProvider || !thread) {
             setThreadDataAccount(null)
         }
@@ -205,7 +200,6 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
                 const threadAccount = await clockworkProvider.getThreadAccount(thread);
                 setThreadDataAccount(threadAccount)
             } catch (error) {
-                console.log(`Error fetching thread account: ${error}`)
                 setThreadDataAccount(null)
             }
         }
@@ -221,7 +215,6 @@ export const GameContextProvider: FC<{ children: ReactNode }> = ({ children }) =
                     "runData",
                     runAccountInfo.data
                 )
-                console.log("Got new run score via socket:", decodedAccount.score.toString())
                 setRunDataAccount(decodedAccount)
             }
         )

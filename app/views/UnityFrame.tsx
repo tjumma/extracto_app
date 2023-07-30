@@ -11,11 +11,9 @@ const isBrowser = () => typeof window !== 'undefined';
 
 function getWindowPixelRatio() {
     if (isBrowser()) {
-        console.log(`updateDevicePixelRatio: ${window.devicePixelRatio}`);
         return window.devicePixelRatio;
     }
     else {
-        console.log(`updateDevicePixelRatio: 1`);
         return 1;
     }
 }
@@ -47,7 +45,6 @@ export const UnityFrame: React.FC = () => {
 
             const updateDevicePixelRatio = function () {
                 var current = getWindowPixelRatio();
-                console.log(`updateDevicePixelRatio: ${current}`);
                 setPixelRatio(current);
             };
 
@@ -75,7 +72,6 @@ export const UnityFrame: React.FC = () => {
     });
 
     function handleClickFullscreen(isFullScreen: boolean) {
-        console.log("Go fullscreen");
         requestFullscreen(isFullScreen);
     }
 
@@ -90,8 +86,6 @@ export const UnityFrame: React.FC = () => {
             bestScore: playerDataAccount? playerDataAccount.bestScore.toNumber() : 0,
             isInRun: playerDataAccount? playerDataAccount.isInRun : false
         }
-        console.log("sending PlayerData to Unity")
-        console.log(JSON.stringify(playerData))
         sendMessage("ReactToUnity", "OnPlayerUpdated", JSON.stringify(playerData));
     }, [publicKey, playerDataAddress, playerDataAccount])
 
@@ -105,8 +99,6 @@ export const UnityFrame: React.FC = () => {
             slots: runDataAccount? runDataAccount.slots : null,
             cards: runDataAccount? runDataAccount.cards : null
         }
-        console.log("sending RunData to Unity")
-        console.log(JSON.stringify(runDataForUnity))
         sendMessage("ReactToUnity", "OnRunUpdated", JSON.stringify(runDataForUnity));
     }, [publicKey, runDataAddress, runDataAccount, playerDataAccount])
 
@@ -121,7 +113,6 @@ export const UnityFrame: React.FC = () => {
     //UNITY TO REACT
 
     function handleGameReady() {
-        console.log(`React got GameReady from Unity`);
         const playerData: PlayerDataForUnity = {
             publicKey: publicKey ? publicKey.toString() : "",
             name: playerDataAccount ? playerDataAccount.name : "",
@@ -129,8 +120,6 @@ export const UnityFrame: React.FC = () => {
             bestScore: playerDataAccount? playerDataAccount.bestScore.toNumber() : 0,
             isInRun: playerDataAccount? playerDataAccount.isInRun : false
         }
-        console.log("sending PlayerData to Unity")
-        console.log(JSON.stringify(playerData))
         sendMessage("ReactToUnity", "OnPlayerUpdated", JSON.stringify(playerData));
         return null;
     };
@@ -143,7 +132,6 @@ export const UnityFrame: React.FC = () => {
     }, [addEventListener, removeEventListener, handleStartNewRunFromUnity]);
 
     function handleInitPlayerFromUnity(playerName: string) {
-        console.log(`React got InitPlayerFromUnity: ${playerName}`);
         initPlayerCallback(playerName)
         return null;
     };
@@ -156,7 +144,6 @@ export const UnityFrame: React.FC = () => {
     }, [addEventListener, removeEventListener, handleInitPlayerFromUnity]);
 
     function handleStartNewRunFromUnity() {
-        console.log(`React got StartNewRunFromUnity`);
         startNewRunCallback();
         return null;
     };
@@ -169,7 +156,6 @@ export const UnityFrame: React.FC = () => {
     }, [addEventListener, removeEventListener, handleStartNewRunFromUnity]);
 
     function handleFinishRunFromUnity() {
-        console.log(`React got FinishRunFromUnity`);
         finishRunCallback();
         return null;
     };
@@ -182,7 +168,6 @@ export const UnityFrame: React.FC = () => {
     }, [addEventListener, removeEventListener, handleFinishRunFromUnity]);
 
     function handleUpgradeFromUnity(cardIndex: number, characterSlotIndex: number) {
-        console.log(`React got UpgradeFromUnity`);
         upgradeCallback(cardIndex, characterSlotIndex);
         return null;
     };

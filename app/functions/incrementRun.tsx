@@ -1,5 +1,4 @@
 export const incrementRun = async (publicKey, program, playerDataAccount, runDataAddress, runDataAccount, sendTransaction, connection, showNotification, setLoading?) => {
-    console.log("Increment run");
 
     const cantIncrementRun = (!publicKey || !program || !runDataAddress || !runDataAccount || !playerDataAccount || !playerDataAccount.isInRun)
 
